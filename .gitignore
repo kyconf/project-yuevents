@@ -1,0 +1,40 @@
+# ====================================
+# OS / system files
+# ====================================
+.DS_Store
+Thumbs.db
+
+# ====================================
+# Python / FastAPI backend
+# ====================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+.venv/
+.env           # hide secrets
+*.sqlite3
+*.db
+*.log
+*.pid
+*.coverage
+coverage.xml
+
+# Optional: IDEs
+.vscode/
+.idea/
+*.swp
+
+# ====================================
+# Node / Next.js frontend
+# ====================================
+frontend/node_modules/
+frontend/.next/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+npm-debug.log*
