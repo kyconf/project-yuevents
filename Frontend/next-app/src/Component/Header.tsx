@@ -2,7 +2,7 @@ import Image from "next/image";
 import Images from "../assets/images.jpg";
 function Header(){
     return(
-    <header className="bg-blue-600 text-white p-4 flex items-center justify-between gap-6 fixed w-full z-10">
+    <header className="bg-blue-600 text-white p-4 flex items-center justify-between gap-6 fixed w-full z-20">
         <div className="">
             <h1 className=" font-mono text-xl font-bold transform transition-transform  duration-500 hover:scale-110 cursor-pointer ml-4 ">Yu-Events</h1>
         </div>

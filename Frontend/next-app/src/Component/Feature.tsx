@@ -6,12 +6,15 @@ import Feature from "@/assets/Feature1.jpg"
 import dynamic from "next/dynamic";
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
+import {motion, useInView } from "framer-motion";
+import { useRef } from "react";
+
 
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 function NextArrow({ onClick }: { onClick?: () => void }) {
   return (
     <div
-      className="absolute top-1/2 right-2 -translate-y-1/2 bg-gray-200 text-black  p-2 cursor-pointer z-50"
+      className="absolute top-1/2 right-2 -translate-y-1/2 bg-gray-200 text-black  p-2 cursor-pointer z-10"
       onClick={onClick}
     >
       &gt;
@@ -22,7 +25,7 @@ function NextArrow({ onClick }: { onClick?: () => void }) {
 function PrevArrow({ onClick }: { onClick?: () => void }) {
   return (
     <div
-      className="absolute top-1/2 left-2 -translate-y-1/2 bg-gray-200 text-black  p-2 cursor-pointer z-50"
+      className="absolute top-1/2 left-2 -translate-y-1/2 bg-gray-200 text-black  p-2 cursor-pointer z-10"
       onClick={onClick}
     >
       &lt;
@@ -30,11 +33,34 @@ function PrevArrow({ onClick }: { onClick?: () => void }) {
   );
 }
 export default function FeaturedCarousel() {
+const textVariant = {
+  hidden: {opacity: 0, y: 50},
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
+};
+
+const featureVariant = {
+  hidden: {opacity: 0, y: 50},
+  visible: (i = 1) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.3, ease: "easeOut" }
+  })
+};
+
+const textRef = useRef<HTMLDivElement>(null);
+const isTextInView = useInView(textRef, {amount: 0.3});
+
+const featureRef = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
+const isFeatureInView = featureRef.map(ref => useInView(ref, {amount: 0.1}));
    const settings_Feartured ={
     dots: true,
     nextArrow: <NextArrow/>,
     prevArrow: <PrevArrow/>,
-    infinite: false,
+    infinite: true,
     slidesToShow: 1,
     slidesToScroll: 1
    }
@@ -42,9 +68,9 @@ export default function FeaturedCarousel() {
     dots: true,
     nextArrow: <NextArrow/>,
     prevArrow: <PrevArrow/>,
-    infinite: false,
+    infinite: true,
     slidesToShow: 4,
-    slidesToScroll: 4
+    slidesToScroll: 1
    }
    const data = [
     {
@@ -82,8 +108,18 @@ export default function FeaturedCarousel() {
 
   return (
    <div className="" id="feature-section">
+        <motion.div
+    ref={textRef}
+    animate={isTextInView ? "visible" : "hidden"}
+    variants={textVariant}>
         <h1 className="mt-10 flex items-center justify-center text-3xl sm:text-3xl md:text-5xl font-mono font-bold text-blue-200 leading-tight ">Featured News</h1>
-        <div className="w-11/12 md:w-3/4 mx-auto mt-10">
+        </motion.div>
+        <motion.div 
+        ref={featureRef[0]}
+        animate={isFeatureInView[0] ? "visible" : "hidden"}
+        variants={featureVariant}
+        custom={1}
+        className="w-11/12 md:w-3/4 mx-auto mt-10">
             <Slider {...settings_Feartured}>
   {data.map((d) => (
     <div key={d.id} className="w-full"> {/* wrapper slide full width */}
@@ -107,11 +143,16 @@ export default function FeaturedCarousel() {
     </div>
   ))}
 </Slider>
-        </div>
+        </motion.div>
 
 
 
-    <div className="mt-10">
+    <motion.div
+    ref={featureRef[1]}
+    animate={isFeatureInView[1] ? "visible" : "hidden"}
+    variants = {featureVariant} 
+    custom={2}
+    className="mt-10">
         <Slider {...settings}>
             {data.map((d) => (
     <div key={d.id} className="w-full"> {/* wrapper slide full width */}
@@ -136,8 +177,8 @@ export default function FeaturedCarousel() {
     </div>
   ))}
         </Slider>
-    </div>
-    <hr className="w-250 mx-auto mt-20"></hr>
+    </motion.div>
+
    </div> 
   
   );
