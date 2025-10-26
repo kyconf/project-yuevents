@@ -24,7 +24,7 @@ export default function MenuTemplateCheckBox(props: Prop) {
   return (
     <>
       <div
-        className="flex relative items-center justify-between gap-1 p-2 min-w-fit bg-white rounded-sm border-1"
+        className="relative flex items-center justify-between gap-1 p-2 min-w-fit bg-white rounded-sm border-1"
         onClick={toggle}
       >
         {title}
@@ -33,7 +33,7 @@ export default function MenuTemplateCheckBox(props: Prop) {
           className={`absolute top-10 z-30 flex flex-col bg-white border-1 border-gray-400 rounded-md ${transClass}`}
         >
           {menuItems.map((children) => (
-            <div className="hover:bg-blue-400 p-2">
+            <div key={children} className="hover:bg-blue-400 p-2">
               <input
                 key={children}
                 className=""

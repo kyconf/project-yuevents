@@ -7,7 +7,7 @@ import DropDownMenuElement from "./DropDownMenuElement";
  */
 const HeaderEventsDropDownMenu = () => {
   return (
-    <div className="absolute bg-white bg-cover p-1 rounded-2xl border-1 border-gray-400 text-sm">
+    <div className="absolute z-1000 bg-white bg-cover p-1 rounded-2xl border-1 border-gray-400 text-sm">
       <DropDownMenuElement name="Calendar Events" href="/events/calendar" />
       <DropDownMenuElement name="Event Feed" href="/events/event-feed" />
       <DropDownMenuElement name="Add an Event" href="/events/post-event" />
