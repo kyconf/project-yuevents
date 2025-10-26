@@ -25,7 +25,7 @@ export default function MenuTemplateSingleChoice(props: Prop) {
   return (
     <>
       <div
-        className="flex relative items-center justify-between gap-1 p-2 min-w-fit bg-white rounded-sm border-1"
+        className="relative flex items-center justify-between gap-1 p-2 min-w-fit bg-white rounded-sm border-1"
         onClick={toggle}
       >
         {title}
