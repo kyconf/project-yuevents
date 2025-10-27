@@ -50,26 +50,27 @@ const featureVariant = {
     transition: { delay: i * 0.1, duration: 0.3, ease: "easeOut" }
   })
 };
-
+ const sliderFor = useRef<Slider>(null);
+  const sliderNav = useRef<Slider>(null);
 const textRef = useRef<HTMLDivElement>(null);
 const isTextInView = useInView(textRef, {amount: 0.3});
 
 const featureRef = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
 const isFeatureInView = featureRef.map(ref => useInView(ref, {amount: 0.1}));
    const settings_Feartured ={
-    dots: true,
-    nextArrow: <NextArrow/>,
-    prevArrow: <PrevArrow/>,
+    asNavFor: sliderNav.current,
+    fade: true,
     infinite: true,
     slidesToShow: 1,
-    slidesToScroll: 1
+    slidesToScroll: 1,
+    arrows: false
    }
     const settings ={
-    dots: true,
+    asNavFor: sliderFor.current,
     nextArrow: <NextArrow/>,
     prevArrow: <PrevArrow/>,
     infinite: true,
-    slidesToShow: 4,
+    slidesToShow: 3,
     slidesToScroll: 1
    }
    const data = [
@@ -120,7 +121,7 @@ const isFeatureInView = featureRef.map(ref => useInView(ref, {amount: 0.1}));
         variants={featureVariant}
         custom={1}
         className="w-11/12 md:w-3/4 mx-auto mt-10">
-            <Slider {...settings_Feartured}>
+            <Slider ref={sliderFor} {...settings_Feartured}>
   {data.map((d) => (
     <div key={d.id} className="w-full"> {/* wrapper slide full width */}
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6 w-full">
@@ -153,7 +154,7 @@ const isFeatureInView = featureRef.map(ref => useInView(ref, {amount: 0.1}));
     variants = {featureVariant} 
     custom={2}
     className="mt-10">
-        <Slider {...settings}>
+        <Slider ref={sliderNav}{...settings}>
             {data.map((d) => (
     <div key={d.id} className="w-full"> {/* wrapper slide full width */}
       <div className="flex flex-col items-center">

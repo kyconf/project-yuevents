@@ -62,7 +62,8 @@ const isTextInView = textRef.map(ref => useInView(ref, {amount: 0.3}));
         Whether it’s a seminar, a festival, or a casual meet-up, you’ll find experiences that match your interests. 
         Get involved and make your days more exciting!
       </p>
-      <a className="mt-10">Find out now ! /Click to forward to event list/</a>
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"
+  rel="noopener noreferrer" className="mt-10 bg-blue-400 p-2 rounded-2xl flex justify-center max-w-50 font-mono cursor-pointer transform transition-transform duration-200 hover:-translate-y-2.5">Find out now ! </a>
     </div>
 
 
@@ -79,11 +80,12 @@ const isTextInView = textRef.map(ref => useInView(ref, {amount: 0.3}));
   variants={textVariantR} 
   className="flex md:flex-row-reverse border-4 border-solid border-blue-600 rounded-xl p-6 max-w-5xl items-center md:items-start justify-between gap-6 bg-white shadow-lg ml-60">
     
-    <div className="flex-1 text-left ">
+    <div className="flex-1">
       <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-5">
        Discover a variety of clubs you can join and explore. Each club offers unique activities, events, and opportunities to meet like-minded people. Find the one that matches your interests and start your journey today. Get involved, make friends, and have fun!
       </p>
-      <a className="mt-10">Find out now ! /Click to forward to event list/</a>
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"
+  rel="noopener noreferrer" className="mt-10 bg-blue-400 p-2 rounded-2xl flex justify-center max-w-50 font-mono cursor-pointer transform transition-transform duration-200 hover:-translate-y-2.5 ml-auto ">Explore More !</a>
     </div>
 
 
@@ -104,7 +106,8 @@ const isTextInView = textRef.map(ref => useInView(ref, {amount: 0.3}));
       <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-5">
         Ready to be part of something amazing? Join us and become a member of our vibrant community. Connect with like-minded people, participate in exciting activities, and grow your skills. Your journey with us starts here!
       </p>
-      <a className="mt-10">Find out now ! /Click to forward to event list/</a>
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank"
+  rel="noopener noreferrer" className="mt-10 bg-blue-400 p-2 rounded-2xl flex justify-center max-w-50 font-mono cursor-pointer transform transition-transform duration-200 hover:-translate-y-2.5">Join Us ! </a>
     </div>
 
 

@@ -103,7 +103,7 @@ function Hero_Section({ onExploreNowClick, onAboutUsClick }: HeroSectionProps) {
                 key={i}
                 ref={imageRefs[i]}
                 className={`relative w-full h-48 md:h-56 rounded-xl overflow-hidden shadow-lg ${
-                  i === 1 ? "translate-y-6" : i === 2 ? "-translate-y-6 mt-10" : ""
+                  i === 1 ? "translate-y-6" : i ===3 ? "translate-y-6" : ""
                 }`}
                 animate={imagesInView[i] ? "visible" : "hidden"}
                 variants={imageVariant}
