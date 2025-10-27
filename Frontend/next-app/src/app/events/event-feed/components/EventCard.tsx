@@ -1,5 +1,3 @@
-"use client";
-import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import FurryBanner from "./FurryBanner.png";
 import { MdAccessTimeFilled } from "react-icons/md";
@@ -15,15 +13,25 @@ export interface EventInformation {
   title: string;
   organizer: string;
   organizerID: number;
+  eventID: number;
   banner: string; // Assuming that what is passed is a url
 }
 
-const EventCard = (prop: EventInformation) => {
+const EventCard = ({
+  date,
+  time,
+  location,
+  category,
+  title,
+  organizer,
+  organizerID,
+  eventID,
+}: EventInformation) => {
   return (
-    <div className="flex flex-col xl:flex-row mx-48 gap-6 min-w-71 bg-white border-1 border-gray-300">
+    <div className="flex flex-col xl:flex-row gap-6 bg-white border-1 border-gray-300">
       <Link
         className="flex relative justify-center xl:flex-none m-1 max-w-640 xl:max-w-50 max-h-320 xl:max-h-25"
-        href={"/clubs/" + prop.organizerID}
+        href={"/events/event/" + eventID}
       >
         <Image
           // Need to replace this with remote image instead of static
@@ -35,24 +43,24 @@ const EventCard = (prop: EventInformation) => {
       <div className="flex flex-col flex-1 gap-2 p-2">
         <Link
           className="text-sky-800 text-xl"
-          href={"/clubs/" + prop.organizerID}
+          href={"/events/event/" + eventID}
         >
-          {prop.title}
+          {title}
         </Link>
         <div className="flex gap-1">
           <MdAccessTimeFilled />
           <div className="flex-1">
-            <p className="text-sm">{prop.date}</p>
-            <p className="text-sm">{prop.time}</p>
+            <p className="text-sm">{date}</p>
+            <p className="text-sm">{time}</p>
           </div>
           <ImLocation2 />
           <div className="flex-1">
-            <p className="text-sm">{prop.location}</p>
+            <p className="text-sm">{location}</p>
           </div>
         </div>
         <div className="flex">
           <span className="rounded-sm bg-gray-500 px-2 py-0.5 text-white">
-            <p className="text-sm">{prop.category}</p>
+            <p className="text-sm">{category}</p>
           </span>
         </div>
       </div>
@@ -60,7 +68,9 @@ const EventCard = (prop: EventInformation) => {
         <button className="rounded-md bg-green-700 text-white px-4 py-2">
           Register
         </button>
-        <p className="text-sm text-gray-600">{prop.organizer}</p>
+        <Link className="text-sm text-gray-600" href={"/clubs/" + organizerID}>
+          {organizer}
+        </Link>
       </div>
     </div>
   );
