@@ -60,6 +60,7 @@ function Hero_Section({ onExploreNowClick, onAboutUsClick }: HeroSectionProps) {
             variants={textVariant}
           >
             <motion.h1
+            
               className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-blue-200 leading-tight mb-5"
               variants={textVariant}
               custom={1}
