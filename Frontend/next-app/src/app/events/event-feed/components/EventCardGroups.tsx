@@ -2,7 +2,7 @@ import React from "react";
 import EventCard, { EventInformation } from "./EventCard";
 
 interface Prop {
-  key: number;
+  key: string;
   events: EventInformation[];
 }
 

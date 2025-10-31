@@ -1,5 +1,5 @@
 import React from "react";
-import MenuTemplate from "./MenuTemplateCheckBox";
+import MenuTemplate from "./MenuTemplate";
 
 export default function MenuLocation() {
   const title = "Location";
@@ -9,5 +9,12 @@ export default function MenuLocation() {
     "Virtual",
     "In-person",
   ];
-  return <MenuTemplate title={title} children={dropDownItems} />;
+  return (
+    <MenuTemplate
+      buttonText={title}
+      children={dropDownItems}
+      queryParam="location"
+      menuType="single"
+    />
+  );
 }

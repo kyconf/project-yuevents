@@ -1,14 +1,14 @@
 import React from "react";
 import MenuTemplate from "./MenuTemplate";
 
-export default function MenuEventType() {
-  const title = "Event Type";
-  const dropDownItems: string[] = ["Athletics/Sports", "Workshop", "Social"];
+export default function MenuOrgType() {
+  const title = "Org Type";
+  const dropDownItems: string[] = ["Hobby", "Culture", "Sports"];
   return (
     <MenuTemplate
       buttonText={title}
       children={dropDownItems}
-      queryParam="event_type"
+      queryParam="org_type"
       menuType="check"
     />
   );

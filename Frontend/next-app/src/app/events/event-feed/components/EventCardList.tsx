@@ -1,9 +1,16 @@
-// From https://blog.devops.dev/implementing-infinite-scroll-in-next-js-a-complete-guide-0ce74d5eb57d
-"use client";
+// // From https://blog.devops.dev/implementing-infinite-scroll-in-next-js-a-complete-guide-0ce74d5eb57d
+// "use client";
 
-import { useEffect, useRef, useState } from "react";
+// import { useEffect, useRef, useState } from "react";
+// import { EventInformation } from "./EventCard";
+// import EventCardGroups, { getEventCardGroups } from "./EventCardGroups";
+//
+
+"use client";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { EventInformation } from "./EventCard";
 import EventCardGroups, { getEventCardGroups } from "./EventCardGroups";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface InfiniteScrollProps {
   initialGroups: EventInformation[][];
@@ -21,42 +28,58 @@ export default function EventCardList({
   const [items, setItems] = useState<EventInformation[][]>(initialGroups);
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(totalItems > initialGroups.length);
+  const [hasMore, setHasMore] = useState(
+    totalItems > initialGroups.length * limit
+  );
   const [error, setError] = useState("");
 
   // The observer will be attached to this element
   const observerTarget = useRef<HTMLDivElement>(null);
-
   // Calculate total pages
   const totalPages = Math.ceil(totalItems / limit);
-  // Fetch more items function
-  const loadMoreItems = async () => {
-    if (loading || !hasMore) return;
 
+  // Reset state when initial props change (when navigating back)
+  useEffect(() => {
+    setItems(initialGroups);
+    setPage(initialPage);
+    setHasMore(totalItems > initialGroups.length * limit);
+    setError("");
+  }, [initialGroups, initialPage, totalItems, limit]);
+
+  // Memoize loadMoreItems to prevent recreation on every render
+  const loadMoreItems = useCallback(async () => {
+    if (loading || !hasMore) return;
     setLoading(true);
+    setError("");
     const nextPage = page + 1;
 
     try {
       const result = await getEventCardGroups(nextPage, limit);
-      if (!result) {
-        setError("Error");
-      } else if (page < totalPages) {
+
+      if (!result || result.length === 0) {
+        setHasMore(false);
+        setError("No more items to load");
+      } else {
         setItems((prevItems) => [...prevItems, ...result]);
         setPage(nextPage);
-        console.log(page);
-      } else {
-        setHasMore(false);
+
+        // Check if we've loaded everything
+        const totalLoaded = nextPage * limit;
+        if (totalLoaded >= totalItems) {
+          setHasMore(false);
+        }
       }
     } catch (err) {
       setError("Failed to load more items. Please try again later.");
-      console.error("Error in client component:", err);
     } finally {
       setLoading(false);
     }
-  };
-  // Setup the intersection observer
+  }, [loading, hasMore, page, limit, totalItems]);
+
+  // Setup intersection observer
   useEffect(() => {
-    if (!observerTarget.current || !hasMore) return;
+    const currentTarget = observerTarget.current;
+    if (!currentTarget || !hasMore) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -67,15 +90,14 @@ export default function EventCardList({
       { threshold: 0.1 }
     );
 
-    observer.observe(observerTarget.current);
+    observer.observe(currentTarget);
 
-    // Cleanup observer on unmount
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
       }
     };
-  }, [hasMore, loading, page]);
+  }, [hasMore, loading, loadMoreItems]);
 
   return (
     <>
@@ -85,7 +107,10 @@ export default function EventCardList({
       {/* Event Card list */}
       <div className="flex flex-col gap-5 my-5">
         {items.map((events, index) => (
-          <EventCardGroups key={index} events={events} />
+          <EventCardGroups
+            key={`${index}-${events[0]?.eventID || index}`}
+            events={events}
+          />
         ))}
       </div>
 
@@ -95,7 +120,9 @@ export default function EventCardList({
         className="infinite-scroll-trigger h-20 flex items-center justify-center mt-8"
       >
         {loading && (
-          <div className="loading-spinner animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900">
+            <AiOutlineLoading3Quarters />
+          </div>
         )}
       </div>
 
