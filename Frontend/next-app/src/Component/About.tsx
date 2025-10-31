@@ -22,7 +22,7 @@ const isTextInView = useInView(textRef, {amount: 0.3});
 
     return(
        <section id="about-section"> 
-         <div className="flex justify-center items-start gap-100 px-6 py-16 bg-gray-50">
+         <div className="flex justify-center items-start gap-100 px-6 py-16 bg-gradient-to-br from-blue-300 to-white ">
            <motion.div
            ref={textRef} 
            className="max-w-100"

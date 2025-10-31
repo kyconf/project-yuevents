@@ -7,7 +7,7 @@ function Header(){
 
     const isLoggedIn = false;
     return(
-    <header className="bg-blue-600 text-white p-4 flex items-center justify-between gap-6 fixed w-full z-20">
+    <header className="bg-gradient-to-br from-black to-blue-800 text-white p-4 flex items-center justify-between gap-6 fixed w-full z-20">
         <div className="">
             <h1 className=" font-mono text-xl font-bold transform transition-transform  duration-500 hover:scale-110 cursor-pointer ml-4 ">Yu-Events</h1>
         </div>

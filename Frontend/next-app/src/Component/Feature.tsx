@@ -8,8 +8,7 @@ import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import {motion, useInView } from "framer-motion";
 import { useRef } from "react";
-
-
+import Link from "next/link"
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 function NextArrow({ onClick }: { onClick?: () => void }) {
   return (
@@ -33,7 +32,9 @@ function PrevArrow({ onClick }: { onClick?: () => void }) {
   );
 }
 export default function FeaturedCarousel() {
-const textVariant = {
+
+
+  const textVariant = {
   hidden: {opacity: 0, y: 50},
   visible: {
     opacity: 1,
@@ -123,10 +124,10 @@ const isFeatureInView = featureRef.map(ref => useInView(ref, {amount: 0.1}));
         className="w-11/12 md:w-3/4 mx-auto mt-10">
             <Slider ref={sliderFor} {...settings_Feartured}>
   {data.map((d) => (
-    <div key={d.id} className="w-full"> {/* wrapper slide full width */}
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-6 w-full">
-        {/* Ảnh */}
-        <div className="md:w-1/2 flex-shrink-0">
+    <div key={d.id} className="w-full"> 
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-6 w-full " >
+  
+        <div className="md:w-1/2 flex-shrink-0" >
           <Image
             src={d.img}
             alt={d.name}
@@ -135,10 +136,11 @@ const isFeatureInView = featureRef.map(ref => useInView(ref, {amount: 0.1}));
             className="w-full h-auto rounded-lg object-cover ml-10"
           />
         </div>
-        {/* Text */}
+  
         <div className="md:w-1/3 flex flex-col justify-center ml-10">
           <p className="text-3xl font-mono font-bold mb-10 text-blue-200">{d.name}</p>
-          <p className="text-blue-200 mb-23">{d.review}</p>
+          <p className="text-blue-200 mb-10">{d.review}</p>
+          <Link href="#" className="cursor-pointer bg-blue-200 w-30 p-3 rounded-lg flex justify-center font-mono font-bold ">Learn more</Link>
         </div>
       </div>
     </div>
@@ -156,9 +158,9 @@ const isFeatureInView = featureRef.map(ref => useInView(ref, {amount: 0.1}));
     className="mt-10">
         <Slider ref={sliderNav}{...settings}>
             {data.map((d) => (
-    <div key={d.id} className="w-full"> {/* wrapper slide full width */}
+    <div key={d.id} className="w-full">
       <div className="flex flex-col items-center">
-        {/* Ảnh */}
+   
         <div className=" flex-shrink-0">
           <Image
             src={d.img}
@@ -167,7 +169,7 @@ const isFeatureInView = featureRef.map(ref => useInView(ref, {amount: 0.1}));
             height={400}
             className=" h-auto rounded-lg object-cover "
           />
-          {/* Text */}
+ 
         <div className="max-w-70">
           <p className="font-bold font-mono text-blue-200 mt-5">{d.name}</p>
           <p className="text-blue-200">This is a description of the events, can be taken from the database later</p>

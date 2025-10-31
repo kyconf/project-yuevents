@@ -11,7 +11,7 @@ function LogIn(){
  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 150); // delay 0.1s
+    const timer = setTimeout(() => setShow(true), 150);
     return () => clearTimeout(timer);
   }, []);
 

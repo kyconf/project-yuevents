@@ -80,6 +80,7 @@ const handleSignUp = async () => {
   if(error) return;
   if(!email || !name || !password){
     alert("Please enter all information!!!");
+    return;
   }
 
    try {
