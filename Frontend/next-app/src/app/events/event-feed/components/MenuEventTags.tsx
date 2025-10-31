@@ -1,8 +1,15 @@
 import React from "react";
-import MenuTemplate from "./MenuTemplateCheckBox";
+import MenuTemplate from "./MenuTemplate";
 
 export default function MenuEventTags() {
   const title = "Event Tags";
   const dropDownItems: string[] = ["Free Food", "Music", "Social"];
-  return <MenuTemplate title={title} children={dropDownItems} />;
+  return (
+    <MenuTemplate
+      buttonText={title}
+      children={dropDownItems}
+      queryParam="event_tags"
+      menuType="check"
+    />
+  );
 }

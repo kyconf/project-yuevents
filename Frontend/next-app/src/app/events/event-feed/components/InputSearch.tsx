@@ -17,7 +17,7 @@ const InputSearch = () => {
         name="search_word"
         placeholder="Search Events"
       />
-      <button className="flex-shrink-0 p-2" type="submit">
+      <button className="flex-shrink-0 p-2 cursor-pointer" type="submit">
         <IoMdSearch />
       </button>
     </Form>
