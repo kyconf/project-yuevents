@@ -13,7 +13,7 @@ __pycache__/
 *.pyd
 venv/
 .venv/
-.env           # hide secrets
+**/.env           # hide secrets
 *.sqlite3
 *.db
 *.log
