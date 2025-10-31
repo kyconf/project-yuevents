@@ -28,7 +28,7 @@ if not exist venv (
 )
 
 REM ---- Open /ping in browser ----
-start http://127.0.0.1:8000/ping
+start http://127.0.0.1:8000/
 
 REM ---- Run FastAPI server ----
 echo Starting FastAPI server...
