@@ -8,24 +8,24 @@ class UserRole(str, Enum):
     admin = "admin"
     # Add more roles if needed
 
-class ProfileBase(BaseModel):
+class UserBase(BaseModel):
     username: Optional[str]
     full_name: Optional[str]
     avatar_url: Optional[str]
     role: Optional[UserRole] = UserRole.user
     about: Optional[str]
 
-class ProfileCreate(ProfileBase):
+class UserCreate(UserBase):
     pass
 
-class ProfileUpdate(BaseModel):
+class UserUpdate(BaseModel):
     username: Optional[str]
     full_name: Optional[str]
     avatar_url: Optional[str]
     role: Optional[UserRole]
     about: Optional[str]
 
-class Profile(ProfileBase):
+class User(UserBase):
     id: str
     created_at: datetime
     updated_at: datetime

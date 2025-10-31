@@ -1,4 +1,4 @@
-from database.supabase_client import supabase
+from supabase_client import supabase
 
 class UserRepository:
     def get_all(self):
