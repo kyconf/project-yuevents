@@ -3,8 +3,14 @@
 import React from "react";
 import Form from "next/form";
 import { IoMdSearch } from "react-icons/io";
+import { useSearchParams } from "next/navigation";
 
+/**
+ * @returns The input field for direct searching of events
+ */
 const InputSearch = () => {
+  const searchParams = useSearchParams();
+  const query = "search_word";
   return (
     <Form
       action="/events/event-feed"
@@ -12,9 +18,22 @@ const InputSearch = () => {
     >
       {/* On submission, the input value will be appended to
           the URL, e.g. /search?query=abc */}
+
+      {/* Preserve all existing search params EXCEPT the current query param */}
+      {Array.from(searchParams.entries())
+        .filter(([key]) => key !== query)
+        .map(([key, value]) => (
+          <input
+            key={`${key}-${value}`}
+            type="hidden"
+            name={key}
+            value={value}
+          />
+        ))}
+
       <input
         className="flex-1 p-2 focus:outline-none"
-        name="search_word"
+        name={query}
         placeholder="Search Events"
       />
       <button className="flex-shrink-0 p-2 cursor-pointer" type="submit">

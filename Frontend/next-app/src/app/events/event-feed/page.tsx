@@ -30,7 +30,7 @@ const page = async () => {
           initialGroups={initialGroups}
           initialPage={0}
           limit={10}
-          totalItems={25}
+          totalItems={100}
         />
       </div>
     </div>

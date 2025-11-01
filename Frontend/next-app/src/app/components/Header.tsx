@@ -4,7 +4,6 @@ import React from "react";
 import HeaderEvents from "@/app/components/HeaderEvents";
 
 /**
- *
  * @returns The header element used in many default pages
  */
 const EventFeedPage = () => {
@@ -28,5 +27,3 @@ const EventFeedPage = () => {
 };
 
 export default EventFeedPage;
-
-// Events, Clubs, About, Contact, img

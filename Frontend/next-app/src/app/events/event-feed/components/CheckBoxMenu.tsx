@@ -1,6 +1,6 @@
 import Form from "next/form";
 import { useSearchParams } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface Prop {
   children: string[];
@@ -8,26 +8,37 @@ interface Prop {
   query: string;
 }
 
+/**
+ * A template for producing check box menus for filter fields.
+ * @prop {string[]} children - The list of button field texts for the menu
+ * @prop {"flex" | "hidden"} - A constant representing the visibility status of this menu
+ * @prop {string} query - The name of the query parameter that the form values will be submitted under
+ *
+ * @returns A check box menu
+ */
 const CheckboxMenu = (props: Prop) => {
   const { children, isOpen, query } = props;
   const menuItems = children || [];
   const searchParams = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Initialize checked items from current search params
+  // Initialize check menu items to being as all being unchecked
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     () => {
-      const currentValue = searchParams.get(query);
-      const currentValues = currentValue ? currentValue.split("%") : [];
       return menuItems.reduce((acc, item) => {
-        acc[item] = currentValues.includes(item.replace("+", "  "));
+        acc[item] = false;
         return acc;
       }, {} as { [key: string]: boolean });
     }
   );
 
+  // Need to update which items have been checked
+  /**
+   * @param {string} item - An element of children
+   *
+   *  item has been checked/unchecked in the menu, update the status of the input field
+   */
   const handleCheck = (item: string) => {
-    console.log(item);
     setCheckedItems((prev) => {
       const newState = {
         ...prev,
@@ -39,6 +50,7 @@ const CheckboxMenu = (props: Prop) => {
     });
   };
 
+  // Submit the current input value
   const handleSubmit = () => {
     if (formRef.current) {
       formRef.current.requestSubmit();
@@ -49,6 +61,22 @@ const CheckboxMenu = (props: Prop) => {
   const getCombinedValue = () => {
     return menuItems.filter((item) => checkedItems[item]).join("%");
   };
+
+  // Fully clear queries, refresh checkbox states
+  useEffect(() => {
+    console.log("changed");
+    const currentValue = searchParams.get(query);
+    const currentValues = currentValue ? currentValue.split("%") : [];
+
+    setCheckedItems(() => {
+      return menuItems.reduce((acc, item) => {
+        acc[item] = currentValues.includes(item.replace("+", " "));
+        return acc;
+      }, {} as { [key: string]: boolean });
+    });
+  }, [searchParams, query, menuItems]);
+
+  const combinedValue = getCombinedValue();
 
   return (
     <Form
@@ -69,15 +97,18 @@ const CheckboxMenu = (props: Prop) => {
         ))}
 
       {/* Single hidden input with combined values */}
-      <input type="hidden" name={query} value={getCombinedValue()} />
+      {combinedValue && (
+        <input type="hidden" name={query} value={combinedValue} />
+      )}
 
       <div className="flex flex-col">
         {menuItems.map((child) => (
           <label
             key={child}
-            className="hover:bg-zinc-300 hover:text-zinc-500 px-4 py-1 cursor-pointer"
+            className="hover:bg-blue-400 px-4 py-1 cursor-pointer"
           >
             <input
+              className="cursor-pointer"
               type="checkbox"
               checked={checkedItems[child]}
               onChange={() => handleCheck(child)}

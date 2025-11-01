@@ -6,7 +6,11 @@ interface Prop {
   events: EventInformation[];
 }
 
-// Event information JSON to React Node (Event Card)
+/**
+ *
+ * @param {EventInformation} event - The JSON casted event details from api, represents a single event
+ * @returns The react component (EventCard) from the event details
+ */
 const getEventCard = (event: EventInformation) => {
   const {
     date,
@@ -37,6 +41,13 @@ const getEventCard = (event: EventInformation) => {
   );
 };
 
+/**
+ * Might require changes depending on pagination implementation
+ *
+ * @param {number} offset - The server side page offset
+ * @param {number} limit - The number of event card groups to fetch
+ * @returns EventInformation[][]
+ */
 export const getEventCardGroups = async (offset: number, limit: number) => {
   const events: EventInformation[][] = [
     [
@@ -76,6 +87,12 @@ export const getEventCardGroups = async (offset: number, limit: number) => {
   }
 };
 
+/**
+ * @param {string} key - Unique identifier for this group of events
+ * @param {EventInformation[]} events - List of events for this given day 
+
+ * @returns The event card groups component
+ */
 const EventCardGroups = (prop: Prop) => {
   const { events } = prop;
   if (events.length == 0) {
