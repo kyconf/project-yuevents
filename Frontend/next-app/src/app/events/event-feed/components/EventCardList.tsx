@@ -1,10 +1,4 @@
 // // From https://blog.devops.dev/implementing-infinite-scroll-in-next-js-a-complete-guide-0ce74d5eb57d
-// "use client";
-
-// import { useEffect, useRef, useState } from "react";
-// import { EventInformation } from "./EventCard";
-// import EventCardGroups, { getEventCardGroups } from "./EventCardGroups";
-//
 
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -19,12 +13,27 @@ interface InfiniteScrollProps {
   totalItems: number;
 }
 
+/**
+ * @param {EventInformation} intitialGroups - A list of {limit} number of groups that are intially loaded on this page
+ * @param {number} initialPage - The initial offset, typically zero
+ * @param {limit} - The number of EventInformation groups being fetched
+ * @param {number} totalItems - The total number of event groups that can be fetched
+ *
+ * @returns The component containing all the event cards, with infinite scrolling
+ */
 export default function EventCardList({
   initialGroups,
   initialPage,
   limit,
   totalItems,
 }: InfiniteScrollProps) {
+  /**
+   * @state {EventInformation} items - The current rendered list of event groups fetched.
+   * @state {number} page - The current page number that has been rendered up to
+   * @state {boolean} loading - Indicates when the page is loading more events from the infinite scroll
+   * @state {boolean} hasMore - Indicates whether more event groups can be fetched
+   * @state {string} error - The error message
+   */
   const [items, setItems] = useState<EventInformation[][]>(initialGroups);
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
@@ -63,7 +72,7 @@ export default function EventCardList({
         setItems((prevItems) => [...prevItems, ...result]);
         setPage(nextPage);
 
-        // Check if we've loaded everything
+        // Check if all events have been fetched
         const totalLoaded = nextPage * limit;
         if (totalLoaded >= totalItems) {
           setHasMore(false);

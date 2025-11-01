@@ -7,12 +7,12 @@ interface Props {
 }
 
 /**
- * @param prop
- * @returns link to prop.href with the given text in prop.name
- *
  * A template for producing drop down or hover menu elements.
+ * @prop {string} name - The text of one of the menu elements
+ * @prop {string} href - Clicking on the name of the menu element directs the user to this link
+ *
+ * @returns part of a drop down menu
  */
-
 const DropDownMenuElement = (prop: Props) => {
   return (
     <Link className="block" href={prop.href}>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import FurryBanner from "./FurryBanner.png";
+import FurryBanner from "../temp_assets/FurryBanner.png";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { ImLocation2 } from "react-icons/im";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import Link from "next/link";
 // Actual props and types tbd
 export interface EventInformation {
   date: string;
-  time: string;
+  time?: string;
   location: string;
   category: string[];
   title: string;
@@ -17,6 +17,19 @@ export interface EventInformation {
   banner: string; // Assuming that what is passed is a url
 }
 
+/**
+ * @param {string} date - The date that the event is taking place on
+ * @param {string} time - The start and end time of the event
+ * @param {string} location - The location of the event
+ * @param {string} category - The categories that the event fall under
+ * @param {string} title - The title of the event
+ * @param {string} organizer - The name of the organizer
+ * @param {number} organizerId - The id of the organizer
+ * @param {number} eventID - The id of the event
+ * @param {string} banner - The api endpoint for the provided banner image for this event
+ *
+ * @returns The event card component
+ */
 const EventCard = ({
   date,
   time,

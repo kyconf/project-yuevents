@@ -1,6 +1,9 @@
 import React from "react";
 import MenuTemplate from "./MenuTemplate";
 
+/**
+ * @returns The input field for event location
+ */
 export default function MenuLocation() {
   const title = "Location";
   const dropDownItems: string[] = [

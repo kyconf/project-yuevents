@@ -8,16 +8,21 @@ interface Prop {
   query: string;
 }
 
-const print = (child: string) => {
-  console.log(child);
-};
-
+/**
+ * A template for producing single option menus for filter fields.
+ * @prop {string[]} children - The list of button field texts for the menu
+ * @prop {"flex" | "hidden"} - A constant representing the visibility status of this menu
+ * @prop {string} query - The name of the query parameter that the form values will be submitted under
+ *
+ * @returns A single option menu
+ */
 const SingleMenu = (props: Prop) => {
   const { children, isOpen, query } = props;
   const menuItems = children || [];
   const searchParams = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
 
+  // When an element in the single option is clicked, modify the query and submit the form
   const handleButtonClick = (value: string) => {
     if (formRef.current) {
       // Set the hidden input value

@@ -2,7 +2,6 @@ import React from "react";
 import DropDownMenuElement from "./DropDownMenuElement";
 
 /**
- *
  * @returns The raw hover menu for the "Events" header
  */
 const HeaderEventsDropDownMenu = () => {

@@ -6,9 +6,11 @@ import MenuOrgType from "./MenuOrgType";
 import MenuEventType from "./MenuEventType";
 import MenuEventTags from "./MenuEventTags";
 import MenuLocation from "./MenuLocation";
-import Link from "next/link";
-import { RiResetLeftFill } from "react-icons/ri";
+import ResetQueryButton from "./ResetQueryButton";
 
+/**
+ * @returns The filtering component, contains all the input fields for filtering such as direct searching or tag filtering
+ */
 const Filters = () => {
   return (
     <div className="flex sticky justify-between items-center -top-2 z-10 p-0.5 border-t-4 border-t-blue-400 bg-gray-300">
@@ -23,12 +25,7 @@ const Filters = () => {
           <MenuLocation />
         </div>
       </div>
-      <Link
-        className="flex flex-none border-1 bg-white rounded-md p-2 m-5 divide-x-1"
-        href="/events/event-feed"
-      >
-        <RiResetLeftFill />
-      </Link>
+      <ResetQueryButton />
     </div>
   );
 };
