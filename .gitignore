@@ -20,7 +20,7 @@ venv/
 *.pid
 *.coverage
 coverage.xml
-
+.env
 # Optional: IDEs
 .vscode/
 .idea/
