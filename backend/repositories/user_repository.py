@@ -1,3 +1,5 @@
+from typing import Optional, Dict, Any, List
+from time import sleep
 from supabase_client import supabase
 
 class UserRepository:
@@ -8,9 +10,50 @@ class UserRepository:
         res = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
         return res.data
 
+    # NEW: simple create() that extracts email/password and forwards the rest
     def create(self, user_data: dict):
-        res = supabase.table("profiles").insert(user_data).execute()
-        return res.data[0]
+        email = user_data["email"]
+        password = user_data["password"]
+        # everything else is considered profile fields
+        profile_fields = {k: v for k, v in user_data.items() if k not in ("email", "password")}
+        return self.create_auth_and_profile(email, password, profile_fields)
+
+    # NEW: direct profile insert (use only if auth.users row already exists)
+    def create_profile(self, profile_data: dict):
+        res = supabase.table("profiles").insert(profile_data).execute()
+        return res.data[0]  # keep your simple style
+
+    def create_auth_and_profile(self, email: str, password: str, profile_fields: Optional[Dict[str, Any]] = None):
+        profile_fields = profile_fields or {}
+        metadata = {}
+        if "full_name" in profile_fields:
+            metadata["full_name"] = profile_fields["full_name"]
+        if "avatar_url" in profile_fields:
+            metadata["avatar_url"] = profile_fields["avatar_url"]
+
+        # 1) Create auth user (pass metadata so trigger can use it)
+        payload = {"email": email, "password": password}
+        if metadata:
+            payload["options"] = {"data": metadata}
+
+        data, error = supabase.auth.sign_up(payload)
+        if error:
+            raise RuntimeError(str(error))
+
+        user_id = data.user.id
+
+        # 2) Wait briefly for the trigger to insert profiles row, then patch extra fields
+        for _ in range(10):  # up to ~2s
+            prof = self.get_by_id(user_id)
+            if prof:
+                break
+            sleep(0.2)
+
+        if profile_fields:
+            supabase.table("profiles").update(profile_fields).eq("id", user_id).execute()
+
+        # Return the final profile
+        return self.get_by_id(user_id)
 
     def update(self, user_id: str, user_data: dict):
         res = supabase.table("profiles").update(user_data).eq("id", user_id).execute()

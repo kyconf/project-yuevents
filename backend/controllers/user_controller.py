@@ -3,6 +3,10 @@ from typing import List
 from entities.user import User, UserCreate, UserUpdate
 from services.user_service import UserService
 
+
+
+
+
 router = APIRouter(prefix="/users", tags=["Users"])
 service = UserService()
 

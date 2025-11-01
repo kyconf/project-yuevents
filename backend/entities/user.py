@@ -16,7 +16,8 @@ class UserBase(BaseModel):
     about: Optional[str]
 
 class UserCreate(UserBase):
-    pass
+    email: EmailStr
+    password: str
 
 class UserUpdate(BaseModel):
     username: Optional[str]
