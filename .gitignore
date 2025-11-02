@@ -39,3 +39,4 @@ frontend/.env.local
 frontend/.env.development
 frontend/.env.production
 npm-debug.log*
+node_modules
