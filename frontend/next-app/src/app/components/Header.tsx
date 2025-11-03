@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Images from "../assets/images.jpg";
+import Images from "@/app/assets/images.jpg";
 import Link from "next/link";
 import HeaderEvents from "./HeaderEvents";
 

@@ -53,7 +53,7 @@ function Hero_Section({ onExploreNowClick, onAboutUsClick }: HeroSectionProps) {
 
   return (
     <>
-      <section className="pt-20 relative flex items-center justify-center h-screen overflow-hidden px-6">
+      <section className=" relative flex items-center justify-center h-screen overflow-hidden px-6 -mt-10">
         <div className="max-w-7xl w-full flex flex-col md:flex-row items-center md:items-start gap-10">
           {/* Text Section */}
           <motion.div
@@ -125,7 +125,7 @@ function Hero_Section({ onExploreNowClick, onAboutUsClick }: HeroSectionProps) {
         </div>
       </section>
 
-      <hr className="w-250 mx-auto"></hr>
+    
     </>
   );
 }

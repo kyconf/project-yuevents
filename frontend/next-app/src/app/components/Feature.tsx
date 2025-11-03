@@ -48,8 +48,8 @@ export default function FeaturedCarousel() {
       transition: { delay: i * 0.1, duration: 0.3, ease: "easeOut" },
     }),
   };
-  const sliderFor = useRef<Slider>(null);
-  const sliderNav = useRef<Slider>(null);
+  const sliderFor = useRef<typeof Slider>(null);
+  const sliderNav = useRef<typeof Slider>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const isTextInView = useInView(textRef, { amount: 0.3 });
 
@@ -115,7 +115,7 @@ export default function FeaturedCarousel() {
   ];
 
   return (
-    <div className="" id="feature-section">
+    <div className="mt-20" id="feature-section">
       <motion.div
         ref={textRef}
         animate={isTextInView ? "visible" : "hidden"}
