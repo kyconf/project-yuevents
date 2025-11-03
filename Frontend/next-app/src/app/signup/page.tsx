@@ -1,4 +1,4 @@
-import SignUp from "@/Component/SignUp";
-export default function signupPage(){
-   return(<SignUp></SignUp> );
+import SignUp from "@/app/components/SignUp";
+export default function signupPage() {
+  return <SignUp></SignUp>;
 }
