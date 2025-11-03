@@ -92,9 +92,6 @@ We follow a **three-tier architecture**:
 ### Component Diagram (3 Layer Architecture)
 
 ![System MVC Diagram](SystemMVC.png)
-```
-
----
 
 ## 5. System Decomposition and Component Roles
 
