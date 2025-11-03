@@ -19,7 +19,7 @@
 1. [Overview](#overview)
 2. [High-Level Goals for Sprint 1](#high-level-goals-for-sprint-1)
 3. [System Context and Environment](#system-context-and-environment)
-4. [Architecture (Abstract View)](#architecture-abstract-view)
+4. [Architecture (Diagram)](#architecture-abstract-view)
 5. [System Decomposition and Component Roles](#system-decomposition-and-component-roles)
 6. [CRC Cards (Class-Level Summary)](#crc-cards-class-level-summary)
 7. [Data Models (Example Fields)](#data-models-example-fields)
@@ -31,7 +31,6 @@
 13. [Implementation Plan & Milestones (Sprint 1)](#implementation-plan--milestones-sprint-1)
 14. [Risks & Mitigations](#risks--mitigations)
 15. [Appendix: Example Repository Layout](#appendix-example-repository-layout)
-16. [System Arch Diagram](#system-architecture-diagram)
 
 ---
 
@@ -90,30 +89,9 @@ We follow a **three-tier architecture**:
 - **Data Layer:** PostgreSQL database, migration scripts, ORM models (SQLModel or SQLAlchemy).
 - **Scraper / Aggregator:** Independent worker scripts (BeautifulSoup) or microservices posting validated JSON to backend endpoints.
 
-### Component Diagram (Mermaid)
+### Component Diagram (3 Layer Architecture)
 
-```mermaid
-flowchart LR
-  subgraph Client
-    A[Next.js UI]
-  end
-  subgraph API
-    B[FastAPI Application]
-  end
-  subgraph Data
-    C[(Postgres DB)]
-  end
-  subgraph Scrapers
-    D[BeautifulSoup Scrapers]
-    E[Discord Bot]
-    F[Instagram Scraper]
-  end
-
-  A -->|HTTPS REST| B
-  B -->|SQL| C
-  D -->|POST /api/events| B
-  E -->|POST /api/events| B
-  F -->|POST /api/events| B
+![System MVC Diagram](SystemMVC.png)
 ```
 
 ---
@@ -450,9 +428,3 @@ Structured logs, request IDs, and metrics (event count, duplicates, failures).
 ```
 
 ---
-
-## 16. System Architecture Diagram
-
-**Three Layer Architecture**
-
-![System MVC Diagram](SystemMVC.png)
