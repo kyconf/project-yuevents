@@ -23,7 +23,11 @@ const HeaderEvents = () => {
   };
 
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div
+      className="nav-component transform transition-transform duration-200 hover:-translate-y-1.5"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <Link href="/events">Events</Link>
       {isDropDownVisible && <HeaderEventsDropDownMenu />}
     </div>

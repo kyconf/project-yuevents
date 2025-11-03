@@ -1,29 +1,65 @@
-import Link from "next/link";
 import Image from "next/image";
-import React from "react";
-import HeaderEvents from "@/app/components/HeaderEvents";
+import Images from "../assets/images.jpg";
+import Link from "next/link";
+import HeaderEvents from "./HeaderEvents";
 
-/**
- * @returns The header element used in many default pages
- */
-const EventFeedPage = () => {
-  // Replace the Link tags with new components if we decide that they should have hover menus, like Events
-  // How should the user icon and subsequent drop down menu look like when logged in or as a guest?
+function Header() {
+  const isLoggedIn = false;
   return (
-    <header className="flex items-center bg-blue-400 border-b-2 border-b-black p-3 px-5 space-x-15 font-sans font-bold">
-      <Link href="/" className="text-2xl grow-1">
-        YUEvents
-      </Link>
-      {/*Add drop down menu when hidden*/}
-      <nav className="hidden md:flex space-x-15 text-xl">
+    <header className="sticky top-0 bg-gradient-to-br from-black to-blue-800 text-white p-4 flex items-center justify-between gap-6 w-full z-20">
+      <div className="">
+        <h1 className=" font-mono text-xl font-bold transform transition-transform  duration-500 hover:scale-110 cursor-pointer ml-4 ">
+          <Link href="/">YU-Events</Link>
+        </h1>
+      </div>
+      <div className="nav-component font-mono flex justify-between items-center gap-10 mr-5">
         <HeaderEvents />
-        <Link href="/clubs">Clubs</Link>
-        <Link href="/About">About</Link>
-        <Link href="/Contact">Contact</Link>
-      </nav>
-      <Image src="/favicon.ico" alt="" width={40} height={40} />
+        <Link
+          className="cursor-pointer transform transition-transform duration-200 hover:-translate-y-1.5"
+          href="/clubs"
+        >
+          Clubs
+        </Link>
+        <Link
+          className="cursor-pointer transform transition-transform duration-200 hover:-translate-y-1.5"
+          href="/about"
+        >
+          About
+        </Link>
+        <Link
+          className="cursor-pointer transform transition-transform duration-200 hover:-translate-y-1.5"
+          href="/contact"
+        >
+          Contact
+        </Link>
+        <div>
+          {isLoggedIn ? (
+            <Image
+              src={Images}
+              alt="profile picture"
+              width={40}
+              className="rounded-full cursor-pointer"
+            ></Image>
+          ) : (
+            <div className="flex gap-2">
+              <Link
+                href="/login"
+                className="inline-block cursor-pointer transform transition-transform duration-200 hover:-translate-y-1.5"
+              >
+                Log In
+              </Link>
+              <p>/</p>
+              <Link
+                href="/signup"
+                className="inline-block cursor-pointer transform transition-transform duration-200 hover:-translate-y-1.5"
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
     </header>
   );
-};
-
-export default EventFeedPage;
+}
+export default Header;

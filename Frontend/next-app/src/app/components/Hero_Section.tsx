@@ -1,8 +1,8 @@
 import Image from "next/image";
-import P1 from '../assets/P1.webp';
-import P5 from '../assets/P5.jpg';
-import P3 from '../assets/P3.jpg';
-import P4 from '../assets/P4.webp';
+import P1 from "../assets/P1.webp";
+import P5 from "../assets/P5.jpg";
+import P3 from "../assets/P3.jpg";
+import P4 from "../assets/P4.webp";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
@@ -12,46 +12,49 @@ type HeroSectionProps = {
 };
 
 function Hero_Section({ onExploreNowClick, onAboutUsClick }: HeroSectionProps) {
-
   // Text variants (fade + slide)
   const textVariant = {
-  hidden: { opacity: 0, y: 50 },
-  visible: (i = 1) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.3, duration: 0.6, ease: "easeOut" }
-  })
-};
+    hidden: { opacity: 0, y: 50 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.3, duration: 0.6, ease: "easeOut" },
+    }),
+  };
 
   // Image variants (fade + scale)
   const imageVariant = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: (i = 1) => ({
-    opacity: 1,
-    scale: 1,
-    transition: { delay: i * 0.3, duration: 0.6, ease: "easeOut" }
-  })
-};
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      scale: 1,
+      transition: { delay: i * 0.3, duration: 0.6, ease: "easeOut" },
+    }),
+  };
 
   // Refs + hooks
   const textRef = useRef<HTMLDivElement>(null); //imagine like creating pointer that help to point to specific div that we want
   const isTextInView = useInView(textRef, { amount: 0.3 }); //if the pointer of textRef is inViewPoint, set isTextInView == true
 
-  const imageRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)]; //create a list of pointer according to the number of pics
-  const imagesInView = imageRefs.map(ref => useInView(ref, { amount: 0.3 }));
+  const imageRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ]; //create a list of pointer according to the number of pics
+  const imagesInView = imageRefs.map((ref) => useInView(ref, { amount: 0.3 }));
 
   const imageData = [
     { src: P1, alt: "Deco 1" },
     { src: P5, alt: "Deco 2" },
     { src: P3, alt: "Deco 3" },
-    { src: P4, alt: "Deco 4" }
+    { src: P4, alt: "Deco 4" },
   ];
 
   return (
     <>
       <section className="pt-20 relative flex items-center justify-center h-screen overflow-hidden px-6">
         <div className="max-w-7xl w-full flex flex-col md:flex-row items-center md:items-start gap-10">
-
           {/* Text Section */}
           <motion.div
             ref={textRef}
@@ -60,7 +63,6 @@ function Hero_Section({ onExploreNowClick, onAboutUsClick }: HeroSectionProps) {
             variants={textVariant}
           >
             <motion.h1
-            
               className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-blue-200 leading-tight mb-5"
               variants={textVariant}
               custom={1}
@@ -73,7 +75,8 @@ function Hero_Section({ onExploreNowClick, onAboutUsClick }: HeroSectionProps) {
               variants={textVariant}
               custom={2}
             >
-              Explore new events, activities and connect with many communities and clubs that share the same hobby with you
+              Explore new events, activities and connect with many communities
+              and clubs that share the same hobby with you
             </motion.p>
 
             <div className="mt-6 flex justify-center md:justify-start gap-5">
@@ -104,17 +107,21 @@ function Hero_Section({ onExploreNowClick, onAboutUsClick }: HeroSectionProps) {
                 key={i}
                 ref={imageRefs[i]}
                 className={`relative w-full h-48 md:h-56 rounded-xl overflow-hidden shadow-lg ${
-                  i === 1 ? "translate-y-6" : i ===3 ? "translate-y-6" : ""
+                  i === 1 ? "translate-y-6" : i === 3 ? "translate-y-6" : ""
                 }`}
                 animate={imagesInView[i] ? "visible" : "hidden"}
                 variants={imageVariant}
                 custom={i}
               >
-                <Image src={img.src} alt={img.alt} fill style={{ objectFit: "cover" }} />
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
               </motion.div>
             ))}
           </div>
-
         </div>
       </section>
 

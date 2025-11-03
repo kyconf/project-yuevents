@@ -15,10 +15,11 @@ interface Props {
  */
 const DropDownMenuElement = (prop: Props) => {
   return (
-    <Link className="block" href={prop.href}>
-      <div className="block px-2 py-1 rounded-xl hover:bg-gray-200 transition-colors duration-200">
-        {prop.name}
-      </div>
+    <Link
+      className="block px-2 py-1 rounded-xl hover:bg-gray-200 transition-colors duration-200 text-black"
+      href={prop.href}
+    >
+      {prop.name}
     </Link>
   );
 };

@@ -13,7 +13,7 @@ import ResetQueryButton from "./ResetQueryButton";
  */
 const Filters = () => {
   return (
-    <div className="flex sticky justify-between items-center -top-2 z-10 p-0.5 border-t-4 border-t-blue-400 bg-gray-300">
+    <div className="flex sticky justify-between items-center top-14 z-10 p-0.5 border-t-4 border-t-blue-400 bg-gray-300">
       <div className="flex items-start">
         <InputSearch />
         <div className="hidden lg:grid grid-cols-4 gap-0.5 my-5">

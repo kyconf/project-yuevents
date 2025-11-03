@@ -4,19 +4,6 @@ import EventCardList from "./components/EventCardList";
 import { getEventCardGroups } from "./components/EventCardGroups";
 import Filters from "./components/Filters";
 
-/**
-   * <EventCard
-          date={"Thu, Oct 23, 2025"}
-          time={"2PM - 4PM"}
-          location={"Private Location (register to display)"}
-          category={["Workshop"]}
-          title={"Convention Badge Workshop"}
-          organizer={"Furry @ York"}
-          organizerID={1}
-          banner={""}
-        />
-   */
-
 const page = async () => {
   const initialGroups = await getEventCardGroups(0, 10);
 
