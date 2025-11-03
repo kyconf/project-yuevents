@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Frontend Routes Overview</title>
+    </head>
+<body>
+    <h1>Frontend Routes & Components</h1>
+
+    <h2>Home Page ("/")</h2>
+    <ul>
+        <li><strong>Navbar</strong> – top navigation bar
+            <ul>
+                <li><strong>"HeaderEvent.tsx"</strong> - Directs user to the general events page and displays a menu when hovering</li>
+                <li><strong>"HeaderEventsDropDownMenu.tsx"</strong> - The menu that becomes visible when hovering over the HeaderEvent component, contains menu options that direct user to the related page</li>
+                <li>"DropDownMenuElement.tsx" - Simple component containing some text and link</li>
+            </ul>
+        </li>
+        <li><strong>Hero_Section</strong> – main landing section with images and call-to-action buttons</li>
+        <li><strong>Featured Events</strong> – show 5 most recent events</li>
+        <li><strong>Links</strong> – forward to events feed/clubs/join</li>
+        <li><strong>Footer</strong> – page footer</li>
+    </ul>
+
+    <h2>Login Page ("/login")</h2>
+    <ul>
+        <li><strong>LoginForm</strong> – email/password input and submit button</li>
+        <li><strong>ForgotPasswordLink</strong></li>
+    </ul>
+
+    <h2>Signup Page ("/signup")</h2>
+    <ul>
+        <li><strong>SignupForm</strong> – name/email/password inputs</li>
+        <li><strong>TermsCheckbox</strong> – accept terms & privacy</li>
+    </ul>
+
+      <h2>Events Calendar ("/events/calendar")</h2>
+    <ul>
+        <li>Component "HeaderEvents.tsx", which is a part of the website header, contains a menu that directs to this page</li>
+    </ul>
+
+    <h2>Events Feed ("/events/event-feed")</h2>
+    <ul>
+        <li>Component "HeaderEvents.tsx", which is a part of the website header, contains a menu that directs to this page</li>
+        <li><strong> Filter component</strong> Contain a search bar, and filtering menus
+            <ul>
+                <li>"InputSearch.tsx" - A search bar.</li>
+                <li>"MenuUpcoming.tsx" - Filter menu for upcoming vs past events</li>
+                <li>"MenuOrganization.tsx" - Filter menu for filtering by organizations</li>
+                <li>"MenuOrgType.tsx" - Filter menu for filtering by organization types, such as hobby and religious clubs</li>
+                <li>"MenuEventType.tsx" - Filter menu for filtering by event types</li>
+                <li>"MenuEventTags.tsx" - Filter menu for filtering by event tags</li>
+                <li>"MenuLocation.tsx" - Filter menu for filtering by where an event is taking place</li>
+                <li>"ResetQueryButton.tsx" - A button that clears the above filter options</li>
+                <li>"MenuTemplate.tsx" - This the component that provides the menu template for the above components</li>
+                <li>"CheckBoxMenu.tsx" - This component is the template for filter checkbox menus</li>
+                <li>"SingleChoice.tsx" - This component is the template for filter single choice menus</li>
+            </ul>
+        </li>
+        <li><strong>"EventList.tsx"</strong> - The component containing all the events to be scrolled through, with infinite scrolling enabling the user to scroll for as many events that can be fetched
+            <ul>
+                <li>"EventCardGroups.tsx" - Component that groups event cards by days</li>
+                <li>"EventCard.tsx" - UI display for the event information that is fetched</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>Post Event ("/events/post-event")</h2>
+    <ul>
+        <li>Component "HeaderEvents.tsx", which is a part of the website header, contains a menu that directs to this page</li>
+    </ul>
+
+    <h2>Events Clubs ("/club")</h2>
+    <ul>
+        <li>Component "HeaderEvents.tsx", which is a part of the website header, contains a menu that directs to this page</li>
+    </ul>
+
+    <p>Note: This is a minimal overview for documentation purposes. Each component may have child components and props, but we’re only listing the top-level parts here.</p>
+</body>
+</html>
