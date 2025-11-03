@@ -1,6 +1,6 @@
 # YUEvents — System Design Document (Sprint 1)
 
-**Location:** `doc/sprint1/YUEvents_System_Design_Sprint1.md`  
+**Location:** `doc/sprint1/system_design.md`  
 **Format:** Markdown (can be exported to PDF / MS-Word / HTML)  
 **Version:** 1.0  
 **Date:** October 2025  
@@ -40,13 +40,13 @@
 
 YUEvents is a web application that aggregates university and club events (scraped from sources such as YuConnect, Discord, and Instagram) and provides a single feed, search, calendar views, and club-exec posting tools.
 
-Sprint 1 focuses on the initial foundation so that model-view-controller connectivity is demonstrated (e.g., creating an Event in the database via the frontend).
+Sprint 1 focuses on the initial foundation so that 3 layer architecture is demonstrated and the individual components of the 3 layer function properly.
 
 **Tech Stack (Project Baseline):**
 
 - **Frontend:** Next.js
 - **Backend:** Python + FastAPI
-- **Database:** PostgreSQL (or MySQL alternative)
+- **Database:** PostgreSQL through Supabase
 - **Scraper:** BeautifulSoup (+ Discord bot / Instagram scraping where permitted)
 - **Auth:** JWT-based session and role management (student, exec, admin)
 
@@ -54,10 +54,9 @@ Sprint 1 focuses on the initial foundation so that model-view-controller connect
 
 ## 2. High-Level Goals for Sprint 1
 
-- Implement `Event` model and API endpoints for create/read/list events.
-- Build basic Next.js pages: event feed list, event details, and a minimal admin/exec event posting form.
-- Establish DB connectivity and migrations to store Events and Clubs.
-- Demonstrate frontend form submission creating a persisted DB event visible in the feed.
+- Implement `Event`, `Club`, `User` model, services and repositories and API endpoints for create/read/list events, clubs, and users.
+- Build basic Next.js pages: event feed list, home page, sign up page, login page.
+- Establish DB connectivity to store Events, Clubs, and user.
 
 ---
 
@@ -65,16 +64,14 @@ Sprint 1 focuses on the initial foundation so that model-view-controller connect
 
 **Assumptions & Dependencies**
 
-- Target OS: Linux (Ubuntu) for deployment; development supported on macOS/Windows.
+- Target OS: macOS/Windows.
 - Python 3.11+ (FastAPI + Uvicorn) and Node 18+ for Next.js.
 - PostgreSQL 13+ recommended; MySQL 8+ supported with minimal changes.
-- Dev tools: Docker (optional) for local development; Alembic for migrations.
-- External services (Sprint 1 limited): scrapers run locally as scripts.
 - Later integration (Discord API, Instagram scraping, YuConnect API) will require tokens and rate-limit handling.
 
 **Network & Infrastructure**
 
-- Backend exposes REST API: `/api/events`, `/api/auth`, `/api/clubs`.
+- Backend exposes REST API .
 - Frontend communicates via same-origin or configured CORS for development.
 - JWT stored in secure HttpOnly cookie (preferred) or localStorage.
 
@@ -99,19 +96,11 @@ This section maps each architectural component to its corresponding code modules
 
 ### Frontend (`frontend/`)
 
-- **pages/** — `/`, `/events/[id]`, `/create`, `/admin`
-- **components/** — `Feed`, `EventCard`, `EventForm`, `SearchBar`
-- **lib/api.ts** — lightweight client wrappers for backend API calls
+[Frontend Docs](FrontendDocs.html)
 
 ### Backend (`backend/fastapi_app/`)
 
-- **main.py** — app and route registration
-- **routers/events.py** — endpoints for list, get, create, edit, delete
-- **routers/auth.py** — handles registration/login and role middleware
-- **models/** — ORM models: `Event`, `Club`, `User`, `Tag`
-- **services/duplicate_detection.py** — simple duplicate heuristics
-- **scrapers/receiver.py** — endpoint for scrapers to POST event data
-- **workers/** — optional background tasks (e.g., email, analytics)
+[Backend Docs](BackendDocs.html)
 
 ### Database
 
@@ -235,44 +224,61 @@ This section maps each architectural component to its corresponding code modules
 
 ## 7. Data Models (Example Fields)
 
-### Event
+## 🗓️ Events Table
 
-| Field                   | Type         | Description                                      |
-| ----------------------- | ------------ | ------------------------------------------------ |
-| id                      | UUID         | Unique event ID                                  |
-| title                   | string       | Event title                                      |
-| description             | text         | Description                                      |
-| start_time / end_time   | timestamp    | Date & time                                      |
-| location                | string       | Location or geo                                  |
-| club_id                 | FK           | Organizer club                                   |
-| source                  | enum         | manual / scraper-yuconnect / discord / instagram |
-| orig_url                | string       | Source link                                      |
-| tags                    | many-to-many | Event tags                                       |
-| created_by              | user_id      | Creator                                          |
-| created_at / updated_at | timestamp    | Record metadata                                  |
-
-### Club
-
-| Field         | Type   |
-| ------------- | ------ |
-| id            | UUID   |
-| name          | string |
-| description   | text   |
-| socials       | JSON   |
-| contact_email | string |
-
-### User
-
-| Field         | Type                       |
-| ------------- | -------------------------- |
-| id            | UUID                       |
-| name          | string                     |
-| email         | string                     |
-| password_hash | string                     |
-| role          | enum(student, exec, admin) |
+| Field           | Type         | Description                                                      |
+| ---------------- | ------------ | ---------------------------------------------------------------- |
+| id               | UUID         | Unique event ID (primary key)                                    |
+| creator_id       | UUID (FK)    | References `auth.users(id)` — creator of the event               |
+| title            | text         | Event title                                                      |
+| description      | text         | Event description                                                |
+| location         | text         | Location or venue                                                |
+| start_at         | timestamp tz | Event start date and time                                        |
+| end_at           | timestamp tz | Event end date and time                                          |
+| rsvp_deadline    | timestamp tz | Optional RSVP deadline                                           |
+| capacity         | integer      | Max number of attendees (nullable, must be ≥ 0 if set)           |
+| is_public        | boolean      | Whether the event is visible to everyone                         |
+| slug             | text (unique)| URL-friendly identifier for the event                            |
+| created_at       | timestamp tz | When the record was created (default: now)                       |
+| updated_at       | timestamp tz | When the record was last updated (default: now)                  |
 
 ---
 
+## 🏛️ Clubs Table
+
+| Field         | Type          | Description                                                      |
+| -------------- | ------------- | ---------------------------------------------------------------- |
+| id             | UUID          | Unique club ID (primary key)                                     |
+| owner_id       | UUID (FK)     | References `auth.users(id)` — the club’s owner                   |
+| name           | text          | Club name                                                        |
+| slug           | text (unique) | URL-friendly identifier for the club                             |
+| about          | text          | Club description or mission                                      |
+| avatar_url     | text          | URL to club logo/avatar                                          |
+| banner_url     | text          | URL to banner image                                              |
+| is_public      | boolean       | Whether the club is visible to everyone                          |
+| join_policy    | enum          | Join policy (`open`, `request`, etc., from `club_join_policy`)   |
+| contact_email  | text          | Contact email for inquiries                                      |
+| website        | text          | Club website URL                                                 |
+| socials        | JSONB         | Object containing social media links                             |
+| created_at     | timestamp tz  | When the club was created (default: now)                         |
+| updated_at     | timestamp tz  | When the club was last updated (default: now)                    |
+
+---
+
+## 👤 Profiles Table
+
+| Field        | Type          | Description                                                    |
+| ------------- | ------------- | -------------------------------------------------------------- |
+| id            | UUID (FK)     | References `auth.users(id)` — user’s unique ID                 |
+| username      | text (unique) | Display username                                               |
+| full_name     | text          | Full name of the user                                          |
+| avatar_url    | text          | Profile picture URL                                            |
+| role          | enum          | User role (`user`, `exec`, `admin`) from `user_role` enum      |
+| about         | text          | Short bio or description                                       |
+| created_at    | timestamp tz  | When the profile was created (default: now)                    |
+| updated_at    | timestamp tz  | When the profile was last updated (default: now)               |
+
+---
 ---
 
 ## 8. API Surface (Sprint 1 Endpoints)
@@ -327,72 +333,29 @@ Each category supports full CRUD operations (Create, Read, Update, Delete).
 - Scraper malformed payload → 422 with explanation
 - Duplicate inserts → 409 Conflict
 
-### Observability
-
-Structured logs, request IDs, and metrics (event count, duplicates, failures).
-
----
-
 ## 10. Security Considerations
 
 - Use parameterized queries / ORM to prevent SQL injection
 - HTTPS for all communication
 - JWTs in HttpOnly cookies (short expiry + refresh tokens if needed)
 - Rate-limit scraper endpoints; require API keys
-- Sanitize HTML from scrapers to prevent XSS
+
 
 ---
 
-## 11. UI / UX Notes (Sprint 1 Minimal Set)
-
-- Event feed with infinite scroll or pagination
-- Event details page
-- Exec-only event posting form
-- Loading & empty states handled gracefully
-
----
-
-## 12. Acceptance Criteria Mapping (Sprint 1 Focus)
+## 11. Acceptance Criteria Mapping (Sprint 1 Focus)
 
 **Features to complete:**
 
-- Event feed listing (with pagination)
-- Event details page
-- Manual post event (exec role)
-- API endpoint for scrapers
-
-**Testing:**
-
-- Unit tests for API routes
-- Integration tests verifying frontend POST → DB persistence
+- Event feed skeleton
+- Home Page
+- API endpoints
+- database connected to backend
+- functional frontend
 
 ---
 
-## 13. Implementation Plan & Milestones (Sprint 1)
-
-| Day | Task                                                 |
-| --- | ---------------------------------------------------- |
-| 1   | Project skeleton with Next.js & FastAPI              |
-| 2   | Define DB schema + migrations (alembic)              |
-| 3–4 | Implement Event model, repo, `/api/events` endpoints |
-| 4–6 | Build Next.js feed, details, and EventForm           |
-| 6   | Add auth stub (exec role protection)                 |
-| 7   | Basic scraper receiver endpoint                      |
-| 8   | Testing + finalize sprint docs                       |
-
----
-
-## 14. Risks & Mitigations
-
-| Risk                  | Mitigation                                           |
-| --------------------- | ---------------------------------------------------- |
-| Scraping/legal issues | Only scrape public content or with consent           |
-| Duplicate flooding    | Add conservative duplicate heuristics                |
-| Time constraints      | Prioritize integrated flow (frontend → backend → DB) |
-
----
-
-## 15. Appendix: Example Repository Layout
+## 12. Appendix: Example Repository Layout
 
 ```
 / (repo root)
@@ -404,22 +367,30 @@ Structured logs, request IDs, and metrics (event count, duplicates, failures).
 │  ├─ repositories/
 │  ├─ services/
 │  ├─ tests/
-│  ├─ main.py
-│  ├─ requirements.txt
-│  └─ supabase_client.py
+│  └─ main.py
+│ 
+│
 │
 ├─ frontend/
 │  └─ next-app/
 │     ├─ public/
 │     └─ src/
-│        ├─ app/
-│        ├─ assets/
-│        └─ components/
+│        └─ app/
+│           ├─ assets/
+│           ├─ components/
+│           
+│           ├─ login/
+│           ├─ clubs/
+│           ├─ join/
+│           ├─ signup/
+│           └─ events/
+│             ├─ calendar/
+│             ├─ event-feed/
+│             └─ post-event/
 │
 └─ doc/
    ├─ sprint0/
    ├─ sprint1/
-   │  └─ YUEvents_System_Design_Sprint1.md
    ├─ sprint2/
    └─ sprint3/
 ```
