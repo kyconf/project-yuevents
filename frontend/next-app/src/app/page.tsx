@@ -8,8 +8,9 @@ import Feature from "@/app/components/Feature";
 import Footer from "@/app/components/Footer";
 import Links from "@/app/components/Links";
 import "swiper/css";
-import "swiper/css/navigation";
+import "swiper/css/navigation"; 
 import "@/app/globals.css";
+
 
 export default function Home() {
   // create refs for section
@@ -18,15 +19,16 @@ export default function Home() {
 
   // func scroll to section
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
-    ref.current?.scrollIntoView({
-      behavior: "smooth",
+    ref.current?.scrollIntoView({ 
+      behavior: 'smooth',
+      
     });
   };
 
   return (
     <>
       <Header />
-      <Hero_Section
+      <Hero_Section 
         onExploreNowClick={() => scrollToSection(featureRef)}
         onAboutUsClick={() => scrollToSection(aboutRef)}
       />
@@ -36,7 +38,7 @@ export default function Home() {
       <div ref={featureRef}>
         <Feature />
       </div>
-      <Links />
+      <Links/>
       <Footer />
     </>
   );
