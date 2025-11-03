@@ -279,20 +279,38 @@ This section maps each architectural component to its corresponding code modules
 
 ---
 
-## 8. API Surface (Selected Endpoints)
+---
 
-| Method | Endpoint | Description |
-|--------|-----------|-------------|
-| POST | `/api/auth/login` | User login → JWT |
-| POST | `/api/auth/register` | User registration |
-| GET | `/api/events` | Event feed (with filters/pagination) |
-| GET | `/api/events/{id}` | Event details |
-| POST | `/api/events` | Create new event |
-| PUT | `/api/events/{id}` | Edit event |
-| DELETE | `/api/events/{id}` | Delete event |
-| POST | `/api/scrapers/submit` | Scraper-only event submission |
+## 8. API Surface (Sprint 1 Endpoints)
+
+The backend exposes RESTful endpoints organized by resource type: **Users**, **Clubs**, and **Events**.  
+Each category supports full CRUD operations (Create, Read, Update, Delete).
+
+| Category | Method | Endpoint | Description |
+|-----------|---------|-----------|-------------|
+| **Users** | POST | `/api/users` | Create new user (registration) |
+|  | GET | `/api/users` | Get all users |
+|  | GET | `/api/users/{id}` | Get user by ID |
+|  | PUT | `/api/users/{id}` | Update existing user |
+|  | DELETE | `/api/users/{id}` | Delete user account |
+| **Clubs** | POST | `/api/clubs` | Create new club |
+|  | GET | `/api/clubs` | Get all clubs |
+|  | GET | `/api/clubs/{id}` | Get club by ID |
+|  | PUT | `/api/clubs/{id}` | Update existing club |
+|  | DELETE | `/api/clubs/{id}` | Delete club |
+| **Events** | POST | `/api/events` | Create new event (manual or scraper) |
+|  | GET | `/api/events` | Get all events (feed) |
+|  | GET | `/api/events/{id}` | Get event by ID |
+|  | PUT | `/api/events/{id}` | Update existing event |
+|  | DELETE | `/api/events/{id}` | Delete event |
+
+**Notes:**
+- All `POST`, `PUT`, and `DELETE` routes require authentication and role-based authorization (exec/admin).
+- `GET` routes are publicly accessible unless restricted by design (e.g., user profiles).
+- Pagination, filtering, and search parameters are supported on collection endpoints (e.g., `/api/events?tag=music&limit=10`).
 
 ---
+
 
 ## 9. Error & Exception Strategy
 
@@ -373,3 +391,63 @@ Structured logs, request IDs, and metrics (event count, duplicates, failures).
 
 ## 15. Appendix: Example Repository Layout
 
+```
+/ (repo root)
+├─ README.md
+│
+├─ backend/
+│  ├─ controllers/
+│  ├─ entities/
+│  ├─ repositories/
+│  ├─ services/
+│  ├─ tests/
+│  ├─ main.py
+│  ├─ requirements.txt
+│  └─ supabase_client.py
+│
+├─ frontend/
+│  └─ next-app/
+│     ├─ public/
+│     └─ src/
+│        ├─ app/
+│        ├─ assets/
+│        └─ components/
+│
+└─ doc/
+   ├─ sprint0/
+   ├─ sprint1/
+   │  └─ YUEvents_System_Design_Sprint1.md
+   ├─ sprint2/
+   └─ sprint3/
+```
+
+
+---
+
+## 16. CRC Cards
+
+### Events
+- **Responsibilities:**
+  - May have a dedicated image, else defaults to the posting club’s banner image
+  - Knows its posting account
+  - Knows its description
+  - Knows the date and time of the event
+- **Collaborators:** N/A
+
+### User
+- **Responsibilities:**
+  - Has a username and password
+  - Manages roles (student, exec, admin)
+- **Collaborators:** N/A
+
+### Account_Exec
+- **Responsibilities:**
+  - Has a banner image
+- **Collaborators:**
+  - User
+
+### Account_Admin
+- **Responsibilities:**
+  - Manage site-level permissions, approve events, merge duplicates
+- **Collaborators:**
+  - User
