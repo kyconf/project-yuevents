@@ -7,7 +7,7 @@ We have met in person and presented the tasks we’ve completed so far, discussi
 - Implemented the **back-end** using **FastAPI**.
 
 ## 2. What do you commit to next?
-We commit to integrating the three components (front-end, back-end, and database) to follow the **MVC architecture** and ensure that they can communicate effectively with each other. Additionally, we aim to test the database and backend server separately while continuing to work on the front-end user interface.
+We commit to integrating the three components (front-end, back-end, and database) to follow the **MVC 3-Layer architecture** and ensure that they can communicate effectively with each other. Additionally, we aim to test the database and backend server separately while continuing to work on the front-end user interface.
 
 ## 3. When do you think you'll be done?
 We aim to complete all tasks for **Sprint 1** by **November 3, 2025**.
