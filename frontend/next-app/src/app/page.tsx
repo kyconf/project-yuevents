@@ -1,34 +1,45 @@
 "use client";
-import { useState } from "react";
+
+import { useRef } from "react";
+import Header from "@/app/components/Header";
+import Hero_Section from "@/app/components/Hero_Section";
+import About from "@/app/components/About";
+import Feature from "@/app/components/Feature";
+import Footer from "@/app/components/Footer";
+import Links from "@/app/components/Links";
+import "swiper/css";
+import "swiper/css/navigation"; 
+import "@/app/globals.css";
+
 
 export default function Home() {
-  const [pong, setPong] = useState("PING");
-  async function ping() {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/ping", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  // create refs for section
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const featureRef = useRef<HTMLDivElement>(null);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setPong(data);
-      return data; // JSON from FastAPI, e.g., { message: "pong" }
-    } catch (error) {
-      console.error("Ping failed:", error);
-      return null;
-    }
-  }
+  // func scroll to section
+  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
+    ref.current?.scrollIntoView({ 
+      behavior: 'smooth',
+      
+    });
+  };
 
   return (
-    <div className="">
-      <button onClick={ping}>Click Me Sir</button>
-      <span>{pong}</span>
-    </div>
+    <>
+      <Header />
+      <Hero_Section 
+        onExploreNowClick={() => scrollToSection(featureRef)}
+        onAboutUsClick={() => scrollToSection(aboutRef)}
+      />
+      <div ref={aboutRef}>
+        <About />
+      </div>
+      <div ref={featureRef}>
+        <Feature />
+      </div>
+      <Links/>
+      <Footer />
+    </>
   );
 }

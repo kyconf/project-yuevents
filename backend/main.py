@@ -1,7 +1,10 @@
 # main.py
 from fastapi import FastAPI
-from database.connection import get_connection
 from fastapi.middleware.cors import CORSMiddleware
+from supabase_client import supabase
+from controllers.event_controller import router as event_router
+from controllers.user_controller import router as user_router
+from controllers.club_controller import router as club_router
 
 app = FastAPI()
 
@@ -14,18 +17,18 @@ app.add_middleware(
     allow_headers=["*"],   # <-- allow all headers
 )
 
+app.include_router(event_router)
+app.include_router(user_router)
+app.include_router(club_router)
 
 @app.get("/")
 def home():
-    # Get a connection and close it immediately (example)
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT 1")  # simple test query
-    result = cur.fetchone()
-    cur.close()
-    conn.close()
-    return {"message": "Connected to PostgreSQL!", "test_query": result[0]}
+    try:
+        users = supabase.auth.admin.list_users()  # Connection check
+        return {"message": "Connected to Supabase!", "user_count": len(users)}
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/ping")
 def pong():
-    return {"pong"}
+    return {"pong": True}
