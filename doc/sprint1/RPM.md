@@ -37,17 +37,17 @@ Establish a stable **frontend**, **backend**, and **database foundation**, each 
 
 | ID | User Story / Task | Description | Owner |
 |----|--------------------|--------------|--------|
-| 1 | **Event Feed** | Display mock event data in feed view | Frontend (Ethan, Jason) |
-| 2 | **Implement Home Page** | Basic navigation and layout | Frontend |
-| 3 | **Implement Login Page** | Local auth mock (to be integrated later) | Frontend |
-| 4 | **Implement Signup Page** | Local form handling only | Frontend |
-| 5 | **Implement User Entity** | Backend `User` model | Backend |
-| 6 | **Implement Event Controller** | Backend endpoints `/api/events` | Backend |
-| 7 | **Implement User Controller** | Backend endpoints `/api/users` | Backend |
-| 8 | **Instantiate PostgreSQL DB** | Configure ORM and migrations | Backend / Database |
-| 9 | **Documentation (Frontend & Backend)** | Create setup and API docs | All |
-| 10 | **System Design Document** | Complete architecture doc | Nathan |
-| 11 | **Features Demo Recording** | Show each layer working independently | All |
+| YE-01 | **Event Feed** | Display mock event data in feed view | Frontend (Jason) |
+| YE-35 | **Implement Home Page** | Basic navigation and layout | Frontend (Louis) |
+| YE-36 | **Implement Login Page** | Local auth mock (to be integrated later) | Frontend (Louis) |
+| YE-37 | **Implement Signup Page** | Local form handling only | Frontend (Louis) |
+| YE-38 | **Implement User Entity** | Backend `User` model | Backend (Nathan) |
+| YE-39 | **Implement Event Controller** | Backend endpoints `/api/events` | Backend (Ethan) |
+| YE-40 | **Implement User Controller** | Backend endpoints `/api/users` | Backend (Nathan) |
+| YE-33 | **Instantiate PostgreSQL DB** | Configure ORM and migrations | Backend / Database (Kyle) |
+| YE-31 | **Documentation (Frontend & Backend)** | Create setup and API docs | (Nathan) |
+| YE-30 | **System Design Document** | Complete architecture doc | (All) |
+| YE-29 | **Features Demo Recording** | Show each layer working independently | (All) |
 
 ---
 
@@ -56,9 +56,8 @@ Establish a stable **frontend**, **backend**, and **database foundation**, each 
 - **Architecture:** Confirmed a three-layer structure (Frontend, Backend, Database).  
   Layers will remain **decoupled in Sprint 1**, integrated later via REST API.
 - **Frontend:** Focus on building functional pages with mocked API responses.  
-- **Backend:** Focus on defining REST endpoints and testing DB operations with Postgres.  
+- **Backend:** Focus on defining REST endpoints and testing DB operations with Postgres. 
 - **Database:** Verified migrations and table creation scripts.  
-- **Documentation:** Each layer must include clear setup instructions and test screenshots.  
 
 ---
 
@@ -67,17 +66,11 @@ Establish a stable **frontend**, **backend**, and **database foundation**, each 
 - ✅ Working **FastAPI backend** (runs independently with Postgres DB)  
 - ✅ Functional **Next.js frontend** with mock data  
 - ✅ PostgreSQL database instantiated with migrations  
-- ✅ System Design Document (`YUEvents_System_Design_Sprint1.md`)  
+- ✅ System Design Document (`system_design.md`)  
 - ✅ Demo recording showing backend and frontend running separately  
 
 ---
-
-## 6. References
-
-- **Trello Board:** (insert Trello link)  
-  Example tasks: `Event feed`, `Features demo recording`, `System design doc`, `Documentation frontend and backend`, `Instantiate PostgreSQL DB`, `Implement home page`, `Implement user entity`, `Implement login page`, `Implement signup page`, `Event controller`, `User controller`.
-
----
-## 7. Meeting recorded
+## 6. Meeting recorded
 
 ![Release Plan Meeting Recorded](1000022381.jpg)
+
