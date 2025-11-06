@@ -9,6 +9,10 @@ class UserRepository:
     def get_by_id(self, user_id: str):
         res = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
         return res.data
+    
+    def get_by_email(self, user_email: str):
+        res = supabase.table("profiles").select("*").eq("email", user_email).single().execute()
+        return res.data
 
     # NEW: simple create() that extracts email/password and forwards the rest
     def create(self, user_data: dict):

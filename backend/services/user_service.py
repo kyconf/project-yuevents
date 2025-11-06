@@ -13,6 +13,12 @@ class UserService:
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return user
+    
+    def get_user_by_email(self, user_em: str):
+        user = self.repo.get_by_(user_em)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
 
     def create_user(self, user_data: dict):
         return self.repo.create(user_data)

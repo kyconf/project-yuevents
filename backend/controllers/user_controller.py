@@ -2,13 +2,31 @@ from fastapi import APIRouter, HTTPException, status
 from typing import List
 from entities.user import User, UserCreate, UserUpdate
 from services.user_service import UserService
-
-
-
-
+from services.jwt_service import JwtService
 
 router = APIRouter(prefix="/users", tags=["Users"])
 service = UserService()
+jwtService = JwtService("secret")
+
+@router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
+def sign_up(user: UserCreate):
+    try:
+        # Create user in DB
+        new_user = service.create_user(user.model_dump())
+        
+        # Generate token using ID and username (from the DB result)
+        token = jwtService.create_token(
+            user_id=new_user.id,
+            username=new_user.username
+        )
+        
+        # Optionally return both
+        return {
+            "user": new_user,
+            "token": token
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/", response_model=List[User])
 def get_users():
