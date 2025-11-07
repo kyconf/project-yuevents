@@ -1,7 +1,7 @@
 import { MdAccessTimeFilled } from "react-icons/md";
 import { ImLocation2 } from "react-icons/im";
 import { FaRegCalendarAlt } from "react-icons/fa";
-import { Fa0 } from "react-icons/fa6";
+
 
 interface EventInfo{
     date: string,
