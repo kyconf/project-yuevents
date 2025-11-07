@@ -6,7 +6,10 @@ import EventInfo from "./components/EventInfo"
 import EventBanner from "./components/EventBanner"
 import RegisterButton from "./components/RegisterButton";
 import EventDescription from "./components/EventDescription";
-/* export async function fetchEventByID(eventID: number){
+interface PageProps {
+  params: { eventID: string };
+}
+ export async function fetchEventByID(eventID: number){
     try{
         //URL backend
         const res = await fetch(`https://localhost:8000/events/${eventID}`); //Assume the backend URL
@@ -14,31 +17,17 @@ import EventDescription from "./components/EventDescription";
         if(!res.ok) {
             throw new Error(`Failed to load event: ${res.status}`)
         }
-        const data = await res.json;
+        const data = await res.json();
         return data;
     } catch(err){
         console.error(err);
         throw err;
     }
 }
-*/ //This is for future use, when we connect frontend and backend
-//Right now we will just use dummy data
 
- const dummyData: EventInformation = {
-        title: "Convention Badge Workshop",
-        time: "2PM - 4PM",
-        location: "Private Location (register to display)",
-        date: "Thu, Oct 23, 2025",
-        category: ["Workshop", "Ethic", "Sports"],
-        organizer: "Furry @ York",
-        organizerID: 1,
-        eventID: 1,
-        banner: "@/app/events/event-feed/temp_assets/FurryBanner.png",
-        description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum"
-      };
-
-export default function Page(){
-    const event = dummyData;
+export default async function Page({params} : {params: {eventID: string}}){
+      const eventID = parseInt(params.eventID, 10);
+  const event = await fetchEventByID(eventID);
     return (<div className="bg-white h-screen">
     <Header></Header>
     <div className="flex flex-col">
