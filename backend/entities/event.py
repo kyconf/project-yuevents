@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+from .club import ClubWithEvent
 
 class EventBase(BaseModel):
     creator_id: str
@@ -13,6 +14,7 @@ class EventBase(BaseModel):
     capacity: Optional[int]
     is_public: bool
     slug: Optional[str]
+    banner: Optional[str]
 
 class EventCreate(EventBase):
     pass
@@ -32,3 +34,6 @@ class Event(EventBase):
     id: str
     created_at: datetime
     updated_at: datetime
+
+class EventWithClub(Event):
+    club: ClubWithEvent

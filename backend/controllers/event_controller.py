@@ -1,12 +1,16 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List, Optional
-from entities.event import Event, EventCreate, EventUpdate
+from entities.event import Event, EventCreate, EventUpdate, EventWithClub
 from services.event_service import EventService
+
+
 
 router = APIRouter(prefix="/events", tags=["Events"])
 service = EventService()
 
-@router.get("/", response_model=List[Event])
+
+# Retrieves list of events queried
+@router.get("/", response_model=List[EventWithClub])
 def get_events(limit: Optional[int] = None):
     try:
         events = service.get_all_events()
@@ -14,7 +18,9 @@ def get_events(limit: Optional[int] = None):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/{event_id}", response_model=Event)
+
+# Only a specific event id queried
+@router.get("/{event_id}", response_model=EventWithClub)
 def get_event(event_id: str):
     try:
         return service.get_event(event_id)
