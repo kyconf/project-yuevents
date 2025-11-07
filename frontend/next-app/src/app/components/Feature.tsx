@@ -6,8 +6,16 @@ import dynamic from "next/dynamic";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+
+
+interface Event{
+  id: string
+  title: string
+  description: string 
+  created_at: string
+}
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 function NextArrow({ onClick }: { onClick?: () => void }) {
   return (
@@ -31,6 +39,29 @@ function PrevArrow({ onClick }: { onClick?: () => void }) {
   );
 }
 export default function FeaturedCarousel() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchEvents(){
+      try{
+        const res = await fetch('http://127.0.0.1:8000/events');
+        if(!res.ok) throw new Error('Failed to fetch events')
+        //take the list of all events and put it data
+        const data: Event[] = await res.json(); //need await so data knows itself an Event[]
+        //sort the whole list by date and time then take only 5 first element 
+        const sortedEvents = data.sort((a: Event, b: Event) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        ).slice(0, 5);
+
+        setEvents(sortedEvents);
+      } catch(err) {console.error(err)}
+      finally{
+        setLoading(false);
+      }
+    }
+    fetchEvents()
+  }, [])
   const textVariant = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -76,43 +107,22 @@ export default function FeaturedCarousel() {
     slidesToShow: 3,
     slidesToScroll: 1,
   };
-  const data = [
-    {
-      id: 1,
-      name: "Furry Day",
-      img: Feature,
-      review:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    },
-    {
-      id: 2,
-      name: `Furry Day`,
-      img: Feature,
-      review:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    },
-    {
-      id: 3,
-      name: `Furry Day`,
-      img: Feature,
-      review:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    },
-    {
-      id: 3,
-      name: `Furry Day`,
-      img: Feature,
-      review:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    },
-    {
-      id: 3,
-      name: `Furry Day`,
-      img: Feature,
-      review:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
-    },
-  ];
+  //while the useEffect still running, display loading 
+    if (loading) {
+    return (
+      <div className="mt-20 flex items-center justify-center">
+        <p className="text-blue-200 text-xl">Loading featured events...</p>
+      </div>
+    );
+  }
+
+    if (events.length === 0) {
+    return (
+      <div className="mt-20 flex items-center justify-center">
+        <p className="text-blue-200 text-xl">No events available</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-20" id="feature-section">
@@ -133,13 +143,13 @@ export default function FeaturedCarousel() {
         className="w-11/12 md:w-3/4 mx-auto mt-10"
       >
         <Slider ref={sliderFor} {...settings_Feartured}>
-          {data.map((d) => (
-            <div key={d.id} className="w-full">
+          {events.map((event) => (
+            <div key={event.id} className="w-full">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6 w-full ">
                 <div className="md:w-1/2 flex-shrink-0">
                   <Image
-                    src={d.img}
-                    alt={d.name}
+                    src={Feature}
+                    alt={event.title}
                     width={700}
                     height={400}
                     className="w-full h-auto rounded-lg object-cover ml-10"
@@ -148,9 +158,9 @@ export default function FeaturedCarousel() {
 
                 <div className="md:w-1/3 flex flex-col justify-center ml-10">
                   <p className="text-3xl font-mono font-bold mb-10 text-blue-200">
-                    {d.name}
+                    {event.title}
                   </p>
-                  <p className="text-blue-200 mb-10">{d.review}</p>
+                  <p className="text-blue-200 mb-10">{event.description}</p>
                   <Link
                     href="#"
                     className="cursor-pointer bg-blue-200 w-30 p-3 rounded-lg flex justify-center font-mono font-bold "
@@ -172,13 +182,13 @@ export default function FeaturedCarousel() {
         className="mt-10"
       >
         <Slider ref={sliderNav} {...settings}>
-          {data.map((d) => (
-            <div key={d.id} className="w-full">
+          {events.map((event) => (
+            <div key={event.id} className="w-full">
               <div className="flex flex-col items-center">
                 <div className=" flex-shrink-0">
                   <Image
-                    src={d.img}
-                    alt={d.name}
+                    src={Feature}
+                    alt={event.title}
                     width={250}
                     height={400}
                     className=" h-auto rounded-lg object-cover "
@@ -186,11 +196,10 @@ export default function FeaturedCarousel() {
 
                   <div className="max-w-70">
                     <p className="font-bold font-mono text-blue-200 mt-5">
-                      {d.name}
+                      {event.title}
                     </p>
                     <p className="text-blue-200">
-                      This is a description of the events, can be taken from the
-                      database later
+                      {event.description}
                     </p>
                   </div>
                 </div>
