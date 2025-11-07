@@ -15,8 +15,8 @@ class JwtService:
         payload = {
             "user_id": user_id,
             "username": username,
-            "exp": datetime.datetime.now(datetime.timezone.utc)() + datetime.timedelta(minutes=self.expiry_minutes),
-            "iat": datetime.datetime.now(datetime.timezone.utc)()
+            "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=self.expiry_minutes),
+            "iat": datetime.datetime.now(datetime.timezone.utc)
         }
 
         if extra_claims:
@@ -24,6 +24,7 @@ class JwtService:
 
         token = jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
         return token
+
 
     def decode_token(self, token: str) -> dict:
         """
