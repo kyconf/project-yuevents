@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Query
 from typing import List, Optional
 from entities.event import Event, EventCreate, EventUpdate, EventWithClub
 from services.event_service import EventService
@@ -11,10 +11,12 @@ service = EventService()
 
 # Retrieves list of events queried
 @router.get("/", response_model=List[EventWithClub])
-def get_events(limit: Optional[int] = None):
+def get_events(
+    limit: int = Query(10, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
     try:
-        events = service.get_all_events()
-        return events[:limit] if limit else events
+        return service.get_all_events(limit=limit, offset=offset)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
