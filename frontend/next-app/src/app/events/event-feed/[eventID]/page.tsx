@@ -19,7 +19,7 @@ interface Event {
   id: string,
   created_at: string,
   updated_at: string,
-  category?: string[]  // category là array
+  category?: string[]  
 }
 
 async function fetchEvent(id: string): Promise<Event> {
