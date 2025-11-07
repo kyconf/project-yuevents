@@ -37,6 +37,7 @@ const getEventCard = (event: EventInformation) => {
       eventID={eventID}
       banner={banner}
       key={eventID}
+      description=""
     />
   );
 };
@@ -61,6 +62,7 @@ export const getEventCardGroups = async (offset: number, limit: number) => {
         organizerID: 1,
         eventID: 1,
         banner: "",
+        description:""
       },
       {
         title: "Convention Badge Workshop",
@@ -72,6 +74,7 @@ export const getEventCardGroups = async (offset: number, limit: number) => {
         organizerID: 1,
         eventID: 2,
         banner: "",
+        description: ""
       },
     ],
   ];

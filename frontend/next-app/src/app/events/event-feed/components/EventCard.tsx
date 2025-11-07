@@ -15,6 +15,7 @@ export interface EventInformation {
   organizerID: number;
   eventID: number;
   banner: string; // Assuming that what is passed is a url
+  description: string;
 }
 
 /**
@@ -44,7 +45,7 @@ const EventCard = ({
     <div className="flex flex-col xl:flex-row gap-6 bg-white border-1 border-gray-300">
       <Link
         className="flex relative justify-center xl:flex-none m-1 max-w-640 xl:max-w-50 max-h-320 xl:max-h-25"
-        href={"/events/event/" + eventID}
+        href={"/events/event-feed/" + eventID}
       >
         <Image
           // Need to replace this with remote image instead of static
