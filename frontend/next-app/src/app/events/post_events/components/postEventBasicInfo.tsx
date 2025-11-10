@@ -1,6 +1,14 @@
 import Category from "./postEventCategory";
+import {useState} from "react";
+interface Props{
+    title: string,
+    description: string,
+    location: string,
+    onChange: (field: string, value: unknown) => void
+}
+export default function EventBasicInfo({title, description, onChange, location}:Props){
+    
 
-export default function EventBasicInfo(){
     const category = [
     {value: "Sport", lable: "Sport"},
     {value: "Film", lable: "Film"},
@@ -19,27 +27,29 @@ export default function EventBasicInfo(){
                 <input 
                 type="text"
                 placeholder="Event name"
-                className="w-full border p-2 mb-4 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                className="w-full border p-2 mb-4 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 " 
+                required
+                value={title}
+                onChange={e => onChange("title", e.target.value)}
                 ></input>
 
                 <label>Description</label>
                 <textarea
                 placeholder="Event description"
-                className="w-full border p-2 -pb-5 mb-4 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 "></textarea>
+                className="w-full border p-2 -pb-5 mb-4 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                value={description}
+                onChange={e => onChange("description", e.target.value)}></textarea>
+                
 
                 <label className="">Location *</label>
                 <input 
                 type="text"
                 placeholder="Event name"
                 className="w-full border p-2 mb-4 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                required
+                value={location}
+                onChange={e => onChange("location", e.target.value)}
                 ></input>
-                
-                <div className="flex gap-10 mt-5">
-                  <label>Category</label>
-                    <div className=" rounded cursor-pointer bg-white text-blue-600">
-                        <Category options={category} placeholder="Choose your categories"></Category>
-                    </div>
-                </div>
             </form>
         </div>
     );
