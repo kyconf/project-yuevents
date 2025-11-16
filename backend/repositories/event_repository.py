@@ -1,4 +1,7 @@
 from supabase_client import supabase
+from supabase import create_client, Client
+
+
 
 class EventRepository:
 
@@ -16,8 +19,9 @@ class EventRepository:
             res = (
                 supabase
                 .table("events")
-                .select("id,title,starts_at,location,description,club:clubs(id,name,slug)")
-                .order("starts_at", desc=not asc)
+                .select("id,title,description,location,start_at,end_at,is_public,slug,club_id,banner,"
+            "club:clubs(id,name,slug)"  )
+                .order("start_at", desc=not asc)
                 .range(offset, offset + limit - 1)
             )
 
@@ -27,16 +31,16 @@ class EventRepository:
         res = (
             supabase
             .table("events")
-            .select("id,title,starts_at,location,description,club:clubs(id,name,slug)")
+            .select("id,title,start_at,location,description,club:clubs(id,name,slug)")
             .eq("id", event_id)
             .single()
             .execute()
         )
         return res.data
 
-    def create(self, event_data: dict):
-        res = supabase.table("events").insert(event_data).execute()
-        return res.data[0]
+    def create(self, payload: dict) -> dict:
+        res = supabase.table("events").insert(payload).execute()
+        return res.data[0]  # inserted row as a dict      
 
     def update(self, event_id: str, event_data: dict):
         res = supabase.table("events").update(event_data).eq("id", event_id).execute()
