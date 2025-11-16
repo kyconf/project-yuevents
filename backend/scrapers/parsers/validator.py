@@ -7,7 +7,7 @@ import os
 
 # All this to import Event from backend/entities/event.py
 current_file_dir = os.path.dirname(os.path.abspath(__file__))
-entities_dir = os.path.normpath(os.path.join(current_file_dir, '..', '..', '..', 'entities'))
+entities_dir = os.path.normpath(os.path.join(current_file_dir, '..', '..', 'entities'))
 if entities_dir not in sys.path:
     sys.path.append(entities_dir)
 from event import EventBase

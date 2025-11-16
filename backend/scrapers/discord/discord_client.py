@@ -1,7 +1,13 @@
 import asyncio
 import discord
 from discord import Intents
-from config import DISCORD_TOKEN, MESSAGE_FETCH_LIMIT
+import os
+from dotenv import load_dotenv
+load_dotenv()
+# TODO: Make the backend folder a package to load the env once at the root
+
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+MESSAGE_FETCH_LIMIT = os.getenv("MESSAGE_FETCH_LIMIT")
 
 intents = Intents.default()
 intents.message_content = True
@@ -45,3 +51,7 @@ async def fetch_messages_from_channels(channel_ids: list[int], limit: int = MESS
             all_messages[channel_id] = []
 
     return all_messages
+
+CHANNEL_IDS = os.getenv("DISCORD_CHANNEL_IDS")  # e.g., [123456789012345678, 987654321098765432]
+CHANNEL_IDS = [int(x) for x in CHANNEL_IDS.split(",") if x.strip()]
+asyncio.run(fetch_messages_from_channel(CHANNEL_IDS[0]))

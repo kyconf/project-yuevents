@@ -1,12 +1,8 @@
 import os, json, sys
 from huggingface_hub import InferenceClient
-
-# Adjusting the Python path to access config.py one level up:
-current_script_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_script_dir)
-sys.path.append(parent_dir)
-from config import HUGGINGFACE_API_KEY
-
+from dotenv import load_dotenv
+load_dotenv()
+# TODO: Make the backend folder a package to load the env once at the root
 
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 if not HUGGINGFACE_API_KEY:

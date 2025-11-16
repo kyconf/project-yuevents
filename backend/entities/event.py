@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional
 
 class EventBase(BaseModel):
-    creator_id: str
+    # creator_id: str
     title: str
     description: Optional[str]
     location: Optional[str]
@@ -29,6 +29,6 @@ class EventUpdate(BaseModel):
     slug: Optional[str]
 
 class Event(EventBase):
-    id: str
+    # id: str
     created_at: datetime
     updated_at: datetime
