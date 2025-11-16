@@ -110,15 +110,13 @@ useEffect(() => {
   const sliderFor = useRef<typeof Slider>(null);
   const sliderNav = useRef<typeof Slider>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const isTextInView = useInView(textRef, { amount: 0.3 });
+
 
   const featureRef = [
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  const isFeatureInView = featureRef.map((ref) =>
-    useInView(ref, { amount: 0.1 })
-  );
+
   const settings_Feartured = {
     asNavFor: sliderNav.current,
     fade: true,

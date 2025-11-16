@@ -1,38 +1,40 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
+from .club import ClubWithEvent
+from uuid import UUID
 
 class EventBase(BaseModel):
-   id: str
-   title: str
-   description: Optional[str]
-   location: str
-   start_at: str
-   end_at: str
-   rsvp_deadline: Optional[str]
-   capacity: int
-   is_public: bool
-   slug: Optional[str]
-   created_at: str
-   updated_at: str
-   banner: str
-   club_id: str
+    title: str
+    description: Optional[str] = None
+    location: Optional[str] = None
+    start_at: datetime
+    end_at: datetime
+    rsvp_deadline: Optional[datetime] = None
+    capacity: Optional[int] = Field(default=None, ge=0)
+    is_public: bool = True
+    slug: Optional[str] = None
+    banner: Optional[str] = None
 
 class EventCreate(EventBase):
-    pass
+    club_id: UUID
 
 class EventUpdate(BaseModel):
-    title: Optional[str]
-    description: Optional[str]
-    location: Optional[str]
-    start_at: Optional[datetime]
-    end_at: Optional[datetime]
-    rsvp_deadline: Optional[datetime]
-    capacity: Optional[int]
-    is_public: Optional[bool]
-    slug: Optional[str]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    location: Optional[str] = None
+    start_at: Optional[datetime] = None
+    end_at: Optional[datetime] = None
+    rsvp_deadline: Optional[datetime] = None
+    capacity: Optional[int] = None
+    is_public: Optional[bool] = None
+    slug: Optional[str] = None
+    banner: Optional[str] = None
 
 class Event(EventBase):
     id: str
     created_at: datetime
     updated_at: datetime
+
+class EventWithClub(Event):
+    club: ClubWithEvent

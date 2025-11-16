@@ -1,69 +1,40 @@
-interface Props{
-    capacity: number,
-    public_event: boolean,
-    slug: string,
-    organizer: string,
-    onChange: (field:string, value:unknown) => void;
-
+interface EventSettingsProps {
+  capacity: number;
+  is_public: boolean;
+  slug: string;
+  onChange: (field: string, value: unknown) => void;
 }
 
+export default function EventSettings({ capacity, is_public, slug, onChange }: EventSettingsProps) {
+  return (
+    <div className="space-y-4">
+      <label className="block text-gray-700 font-semibold">Capacity</label>
+      <input
+        type="number"
+        value={capacity}
+        onChange={(e) => onChange("capacity", Number(e.target.value))}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Max number of participants"
+      />
 
+      <label className="block text-gray-700 font-semibold">Public Event?</label>
+      <select
+        value={is_public ? "true" : "false"}
+        onChange={(e) => onChange("is_public", e.target.value === "true")}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
 
-export default function EventSettings({capacity, public_event, slug, organizer, onChange}:Props){
-     return (
-    <div className=" text-blue-300 ">
-
-      <form className="flex flex-col mt-9 mr-15 justify-between">
-        {/* Capacity */}
-        <div className="flex flex-col">
-          <label className="mb-1">Capacity</label>
-          <input
-            type="number"
-            min={1}
-            className="w-full border p-2 mb-4 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter max attendees"
-            required
-            value={capacity}
-            onChange={e => onChange("capacity", e.target.value)}
-          />
-        </div>
-
-        {/* Visibility */}
-        <div className="flex items-center justify-between mt-5 mb-5">
-          <label className="">Public Event</label>
-          <input
-            type="checkbox"
-            className="w-5 h-5 accent-blue-500"
-            checked={public_event}
-            onChange={e => onChange("public_event", e.target.checked)}
-          />
-        </div>
-
-        {/* Slug */}
-        <div className="flex flex-col mb-3">
-          <label className="mb-1">Custom Slug</label>
-          <input
-            type="text"
-            className="w-full border p-2 mb-4 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="your-event-name"
-            value={slug}
-            onChange={e => onChange("slug", e.target.value)}
-          />
-        </div>
-
-        {/* Organizer info */}
-        <div className="flex flex-col mb-3">
-          <label className="mb-1">Organizer Name</label>
-          <input
-            type="text"
-            className="w-full border p-2 mb-4 mt-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Name of your organization"
-            required
-            value={organizer}
-            onChange={e => onChange("organizer", e.target.value)}
-          />
-        </div>
-      </form>
+      <label className="block text-gray-700 font-semibold">Slug</label>
+      <input
+        type="text"
+        value={slug}
+        onChange={(e) => onChange("slug", e.target.value)}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="event-slug"
+      />
     </div>
   );
 }
