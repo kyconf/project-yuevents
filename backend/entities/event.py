@@ -3,16 +3,20 @@ from datetime import datetime
 from typing import Optional
 
 class EventBase(BaseModel):
-    creator_id: str
-    title: str
-    description: Optional[str]
-    location: Optional[str]
-    start_at: datetime
-    end_at: datetime
-    rsvp_deadline: Optional[datetime]
-    capacity: Optional[int]
-    is_public: bool
-    slug: Optional[str]
+   id: str
+   title: str
+   description: Optional[str]
+   location: str
+   start_at: str
+   end_at: str
+   rsvp_deadline: Optional[str]
+   capacity: int
+   is_public: bool
+   slug: Optional[str]
+   created_at: str
+   updated_at: str
+   banner: str
+   club_id: str
 
 class EventCreate(EventBase):
     pass

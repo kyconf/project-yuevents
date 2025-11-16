@@ -1,5 +1,5 @@
 import Image from "next/image"
-import FurryBanner from "@/app/events/event-feed/temp_assets/FurryBanner.png"
+
 
 interface EventBanner{
     banner: string,
@@ -7,5 +7,5 @@ interface EventBanner{
 }
 
 export default function EventBanner({banner, title}: EventBanner){
-   return( <Image src={FurryBanner} alt={title} width={600} height={300} className="rounded-md " />);
+   return( <Image src={banner} alt={title} width={600} height={300} className="rounded-md " />);
 }

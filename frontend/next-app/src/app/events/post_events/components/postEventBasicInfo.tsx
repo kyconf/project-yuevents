@@ -7,19 +7,7 @@ interface Props{
     onChange: (field: string, value: unknown) => void
 }
 export default function EventBasicInfo({title, description, onChange, location}:Props){
-    
 
-    const category = [
-    {value: "Sport", lable: "Sport"},
-    {value: "Film", lable: "Film"},
-    {value: "Education", lable: "Education"},
-    {value: "Game", lable: "Game"},
-
-    {value: "Technology", lable: "Technology"},
-    {value: "Workshop", lable: "Workshop"},
-    {value: "Networking", lable: "Networking"},
-    {value: "Other", lable: "Other"}
-];
     return(
         <div className="text-blue-300 ml-5 mt-10">
             <form>

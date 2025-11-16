@@ -78,7 +78,7 @@ export default function Page(){
     field.category.forEach((c, i) => formData.append(`category[${i}]`, c.value));
 
     try {
-        const res = await fetch("/api/events", {
+        const res = await fetch("http://127.0.0.1:8000/events/", {
             method: "POST",
             body: formData
         });

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Feature from "../assets/Feature1.jpg";
 import dynamic from "next/dynamic";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -10,11 +9,35 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 
 
-interface Event{
-  id: string
-  title: string
-  description: string 
-  created_at: string
+interface Event {
+  id: string,
+  title: string,
+  description: string,
+  location: string,
+  start_at: string,
+  end_at: string,
+  rsvp_deadline: string,
+  capacity: number,
+  is_public: boolean,
+  slug?: string,
+  created_at: string,
+  updated_at: string,
+  banner: string,
+  club_id: string,
+
+}
+
+async function fetchEvent(): Promise<Event[]> {
+  const res = await fetch(`http://localhost:8000/events/`, {
+    cache: 'no-store'
+  });
+  
+  if (!res.ok) {
+    throw new Error(`Failed to fetch event: ${res.status}`);
+  }
+  const data: Event[] = await res.json();
+  console.log(data)
+  return data;
 }
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 function NextArrow({ onClick }: { onClick?: () => void }) {
@@ -42,26 +65,31 @@ export default function FeaturedCarousel() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchEvents(){
-      try{
-        const res = await fetch('http://127.0.0.1:8000/events');
-        if(!res.ok) throw new Error('Failed to fetch events')
-        //take the list of all events and put it data
-        const data: Event[] = await res.json(); //need await so data knows itself an Event[]
-        //sort the whole list by date and time then take only 5 first element 
-        const sortedEvents = data.sort((a: Event, b: Event) => 
+useEffect(() => {
+  async function loadEvents() {
+    try {
+      setLoading(true);     
+      const data: Event[] = await fetchEvent(); 
+      console.log("Fetched events:", data);
+      const sortedEvents = data
+        .sort((a: Event, b: Event) => 
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        ).slice(0, 5);
+        )
+        .slice(0, 5);
 
-        setEvents(sortedEvents);
-      } catch(err) {console.error(err)}
-      finally{
-        setLoading(false);
-      }
+      setEvents(sortedEvents);
+   
+      
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    fetchEvents()
-  }, [])
+  }
+  
+  loadEvents();
+}, []);
+
   const textVariant = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -128,7 +156,7 @@ export default function FeaturedCarousel() {
     <div className="mt-20" id="feature-section">
       <motion.div
         ref={textRef}
-        animate={isTextInView ? "visible" : "hidden"}
+        animate="visible"
         variants={textVariant}
       >
         <h1 className="mt-10 flex items-center justify-center text-3xl sm:text-3xl md:text-5xl font-mono font-bold text-blue-200 leading-tight ">
@@ -137,10 +165,10 @@ export default function FeaturedCarousel() {
       </motion.div>
       <motion.div
         ref={featureRef[0]}
-        animate={isFeatureInView[0] ? "visible" : "hidden"}
+        animate="Visible"
         variants={featureVariant}
         custom={1}
-        className="w-11/12 md:w-3/4 mx-auto mt-10"
+        className="w-11/12 md:w-3/4 mx-auto mt-25 "
       >
         <Slider ref={sliderFor} {...settings_Feartured}>
           {events.map((event) => (
@@ -148,7 +176,7 @@ export default function FeaturedCarousel() {
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6 w-full ">
                 <div className="md:w-1/2 flex-shrink-0">
                   <Image
-                    src={Feature}
+                    src={event.banner}
                     alt={event.title}
                     width={700}
                     height={400}
@@ -162,7 +190,7 @@ export default function FeaturedCarousel() {
                   </p>
                   <p className="text-blue-200 mb-10">{event.description}</p>
                   <Link
-                    href="#"
+                    href={"/events/event-feed/" + event.id}
                     className="cursor-pointer bg-blue-200 w-30 p-3 rounded-lg flex justify-center font-mono font-bold "
                   >
                     Learn more
@@ -176,10 +204,10 @@ export default function FeaturedCarousel() {
 
       <motion.div
         ref={featureRef[1]}
-        animate={isFeatureInView[1] ? "visible" : "hidden"}
+        animate="visible"
         variants={featureVariant}
         custom={2}
-        className="mt-10"
+        className="mt-20"
       >
         <Slider ref={sliderNav} {...settings}>
           {events.map((event) => (
@@ -187,7 +215,7 @@ export default function FeaturedCarousel() {
               <div className="flex flex-col items-center">
                 <div className=" flex-shrink-0">
                   <Image
-                    src={Feature}
+                    src={event.banner}
                     alt={event.title}
                     width={250}
                     height={400}

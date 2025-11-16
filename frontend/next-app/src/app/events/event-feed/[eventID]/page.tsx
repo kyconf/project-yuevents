@@ -6,7 +6,7 @@ import RegisterButton from "./components/RegisterButton";
 import EventDescription from "./components/EventDescription";
 
 interface Event {
-  creator_id: string,
+  id: string,
   title: string,
   description: string,
   location: string,
@@ -15,11 +15,12 @@ interface Event {
   rsvp_deadline: string,
   capacity: number,
   is_public: boolean,
-  slug: string,
-  id: string,
+  slug?: string,
   created_at: string,
   updated_at: string,
-  category?: string[]  
+  banner: string,
+  club_id: string,
+
 }
 
 async function fetchEvent(id: string): Promise<Event> {
@@ -30,9 +31,11 @@ async function fetchEvent(id: string): Promise<Event> {
   if (!res.ok) {
     throw new Error(`Failed to fetch event: ${res.status}`);
   }
-  
-  return res.json();
+  const data = await res.json();
+  console.log(data)
+  return data;
 }
+
 
 function formatDateTime(isoString: string) {
   const date = new Date(isoString);
@@ -52,18 +55,19 @@ function formatDateTime(isoString: string) {
 }
 
 export default async function Page({params}: {params: {eventID: string}}) {
-    console.log("Fetching event with id:", params.eventID);
+    
     const event = await fetchEvent(params.eventID);
     const startDateTime = formatDateTime(event.start_at);
-
+    const endDateTime = formatDateTime(event.end_at);
+    console.log(event.banner)
     
     return (
-      <div className="bg-white h-screen">
+      <div className="bg-white">
         <Header />
         <div className="flex flex-col">
-          <div className="flex justify-center mt-20">
+          <div className="flex justify-center mt-30">
             <EventBanner 
-              banner="frontend\next-app\src\app\events\event-feed\temp_assets\FurryBanner.png" 
+              banner={event.banner}
               title={event.title}
             />
             <div className="flex flex-col">
@@ -72,15 +76,24 @@ export default async function Page({params}: {params: {eventID: string}}) {
                 organizer="Event Organizer"
               />
               <EventInfo 
-                date={startDateTime.date} 
-                time={startDateTime.time} 
+                start_date={startDateTime.date} 
+                start_time={startDateTime.time} 
+                end_date={endDateTime.date}
+                end_time={endDateTime.time}
                 location={event.location}
               />
               <RegisterButton />
             </div>
           </div>
-          <div className="flex items-center justify-center">
-            <EventDescription description={event.description} />
+          <div className="flex items-center justify-center mb-20">
+            <EventDescription 
+            description={event.description} 
+            rsvp_deadline={formatDateTime(event.rsvp_deadline).date}
+            capacity={event.capacity}
+            is_public={event.is_public}
+            slug={event.slug ?? ""}
+            created_at={formatDateTime(event.created_at).date}
+            updated_at={formatDateTime(event.updated_at).date}/>
           </div>
         </div>
       </div>
