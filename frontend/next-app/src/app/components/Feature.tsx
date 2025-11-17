@@ -26,14 +26,13 @@ interface Event {
   club_id: string,
 
 }
-
-async function fetchEvent(): Promise<Event[]> {
-  const res = await fetch(`http://localhost:8000/events/`, {
+async function fetchEvents(limit: number = 5, offset: number = 0): Promise<Event[]> {
+  const res = await fetch(`http://localhost:8000/events?limit=${limit}&offset=${offset}`, {
     cache: 'no-store'
   });
   
   if (!res.ok) {
-    throw new Error(`Failed to fetch event: ${res.status}`);
+    throw new Error(`Failed to fetch events: ${res.status}`);
   }
   const data: Event[] = await res.json();
   console.log(data)
@@ -69,7 +68,7 @@ useEffect(() => {
   async function loadEvents() {
     try {
       setLoading(true);     
-      const data: Event[] = await fetchEvent(); 
+      const data: Event[] = await fetchEvents(5, 0); 
       console.log("Fetched events:", data);
       const sortedEvents = data
         .sort((a: Event, b: Event) => 
@@ -169,7 +168,7 @@ useEffect(() => {
         className="w-11/12 md:w-3/4 mx-auto mt-25 "
       >
         <Slider ref={sliderFor} {...settings_Feartured}>
-          {events.map((event) => (
+          {events.flat(Infinity).map((event) => (
             <div key={event.id} className="w-full">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6 w-full ">
                 <div className="md:w-1/2 flex-shrink-0">
@@ -208,7 +207,7 @@ useEffect(() => {
         className="mt-20"
       >
         <Slider ref={sliderNav} {...settings}>
-          {events.map((event) => (
+          {events.flat(Infinity).map((event) => (
             <div key={event.id} className="w-full">
               <div className="flex flex-col items-center">
                 <div className=" flex-shrink-0">

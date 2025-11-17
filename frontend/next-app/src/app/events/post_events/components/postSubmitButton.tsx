@@ -2,12 +2,6 @@ interface Props{
     onClick: () => void
 }
 
-
-
-
-
-
-
 export default function SubmitButton({onClick}:Props){
     return(
         <button
@@ -17,7 +11,6 @@ export default function SubmitButton({onClick}:Props){
   mt-3
     w-70
     py-3
-    rounded-xl
     font-semibold
     text-white
     bg-linear-to-r from-blue-500 to-black

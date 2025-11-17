@@ -5,8 +5,8 @@ class EventService:
     def __init__(self, repo: EventRepository = None):
         self.repo = repo or EventRepository()
 
-    def get_all_events(self):
-        return self.repo.get_all()
+    def get_all_events(self, *, limit: int, offset: int):
+        return self.repo.get_all(limit=limit, offset=offset)
 
     def get_event(self, event_id: str):
         event = self.repo.get_by_id(event_id)
