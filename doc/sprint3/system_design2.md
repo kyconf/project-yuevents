@@ -1,5 +1,3 @@
-Understood — here is the **entire Sprint 3 `system_design.md` file**, in **ONE SINGLE unrendered markdown block**, with **no formatting outside the block**.
-
 ---
 # YUEvents — System Design Document (Sprint 3)
 
@@ -290,36 +288,38 @@ To support the calendar page, you will add:
 ```
 
 ### Permissions
-- Only exec/admin can create/edit/delete events  
-- Aggregator endpoint uses API key  
-- Club creation/edit restricted to exec/admin  
-- Comments require authentication  
+
+- Only exec/admin can create/edit/delete events
+- Aggregator endpoint uses API key
+- Club creation/edit restricted to exec/admin
+- Comments require authentication
 
 ### Security Measures
-- Bcrypt password hashing  
-- Short-lived JWT  
-- CORS configured for Next.js domain  
-- Validation against tampered tokens  
+
+- Bcrypt password hashing
+- Short-lived JWT
+- CORS configured for Next.js domain
+- Validation against tampered tokens
 
 ---
-
 
 # 9. Frontend Architecture (Next.js App Router)
 
 ### Directory Structure
+
 ```
 
 frontend/next-app/src/app/
-events/
-event-feed/
-calendar/
-post-event/
-[id]/
-clubs/
-[slug]/
-login/
-signup/
-components/
+/events/
+/events/event-feed/
+/events/calendar/
+/events/event-feed/[eventID]
+/post-event/
+/clubs/
+/about/
+/contact/
+/login/
+/signup/
 
 ```
 
