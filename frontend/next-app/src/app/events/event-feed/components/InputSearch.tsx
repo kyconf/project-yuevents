@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
  */
 const InputSearch = () => {
   const searchParams = useSearchParams();
-  const query = "search_word";
+  const query = "search";
   return (
     <Form
       action="/events/event-feed"
