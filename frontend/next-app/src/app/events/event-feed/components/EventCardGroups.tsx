@@ -12,82 +12,21 @@ interface Prop {
  * @returns The react component (EventCard) from the event details
  */
 const getEventCard = (event: EventInformation) => {
-  const {
-    date,
-    time,
-    location,
-    category,
-    title,
-    organizer,
-    organizerID,
-    eventID,
-    banner,
-  } = event;
+  const { title, location, start_at, end_at, banner, id, club } = event;
 
   // Should change key to something truly unique
   return (
     <EventCard
-      date={date}
-      time={time}
-      location={location}
-      category={category}
       title={title}
-      organizer={organizer}
-      organizerID={organizerID}
-      eventID={eventID}
+      location={location}
+      start_at={start_at}
+      end_at={end_at}
       banner={banner}
-      key={eventID}
-      description=""
+      id={id}
+      club={club}
+      key={id}
     />
   );
-};
-
-/**
- * Might require changes depending on pagination implementation
- *
- * @param {number} offset - The server side page offset
- * @param {number} limit - The number of event card groups to fetch
- * @returns EventInformation[][]
- */
-export const getEventCardGroups = async (offset: number, limit: number) => {
-  const events: EventInformation[][] = [
-    [
-      {
-        title: "Convention Badge Workshop",
-        time: "2PM - 4PM",
-        location: "Private Location (register to display)",
-        date: "Thu, Oct 23, 2025",
-        category: ["Workshop"],
-        organizer: "Furry @ York",
-        organizerID: 1,
-        eventID: 1,
-        banner: "",
-        description:""
-      },
-      {
-        title: "Convention Badge Workshop",
-        time: "2PM - 3PM",
-        location: "Private Location (register to display)",
-        date: "Thu, Oct 23, 2025",
-        category: ["Workshop"],
-        organizer: "Furry @ York",
-        organizerID: 1,
-        eventID: 2,
-        banner: "",
-        description: ""
-      },
-    ],
-  ];
-
-  try {
-    // const url = `https://api/events/event?offset=${offset}&limit=${limit}`;
-    // const response = await fetch(url);
-    // const data = await response.json();
-    return events;
-  } catch (error: unknown) {
-    console.log(error);
-    throw new Error(`An error happened: ${error}`);
-  }
 };
 
 /**
@@ -102,11 +41,13 @@ const EventCardGroups = (prop: Prop) => {
     return null;
   }
 
-  let eventsDate = prop.events[0].date;
+  let eventsDate: Date = new Date(events[0].start_at);
 
   return (
     <div>
-      <h3 className="text-lg text-gray-800 m-1.5">{eventsDate}</h3>
+      <h3 className="text-lg text-gray-800 m-1.5">
+        {eventsDate.toDateString()}
+      </h3>
       {events.map(getEventCard)}
     </div>
   );
