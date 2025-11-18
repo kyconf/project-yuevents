@@ -48,7 +48,7 @@ REM -------------------------------
 REM   Ensure essential packages
 REM -------------------------------
 echo 🔧 Ensuring essential packages are installed...
-pip install fastapi uvicorn pydantic[email] python-dotenv supabase >nul
+pip install fastapi uvicorn "pydantic[email]" python-dotenv supabase-py >nul
 
 REM -------------------------------
 REM   Update requirements.txt
