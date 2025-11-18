@@ -64,7 +64,6 @@ const CheckboxMenu = (props: Prop) => {
 
   // Fully clear queries, refresh checkbox states
   useEffect(() => {
-    console.log("changed");
     const currentValue = searchParams.get(query);
     const currentValues = currentValue ? currentValue.split("%") : [];
 
@@ -82,7 +81,7 @@ const CheckboxMenu = (props: Prop) => {
     <Form
       ref={formRef}
       action="/events/event-feed"
-      className={`absolute top-10 z-30 flex flex-col bg-white border-1 border-gray-400 rounded-md ${isOpen}`}
+      className={`absolute top-10 z-30 flex flex-col bg-white border border-gray-400 rounded-md ${isOpen}`}
     >
       {/* Preserve all existing search params EXCEPT the current query param */}
       {Array.from(searchParams.entries())

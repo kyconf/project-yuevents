@@ -40,3 +40,4 @@ frontend/.env.development
 frontend/.env.production
 npm-debug.log*
 node_modules
+backend/.env
