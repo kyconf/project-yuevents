@@ -14,7 +14,7 @@ service = EventService()
 def get_events(
     limit: int = Query(10, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    columns: List[str] = Query(["id", "title", "start_at", "end_at", "location", "is_public", "slug", "club_id", "banner"], alias="columns"),
+    columns: List[str] = Query(["id", "title", "start_at", "end_at", "location", "is_public", "slug", "banner", "club"], alias="columns"),
 ):
     try:
   
@@ -80,3 +80,4 @@ def delete_event(event_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

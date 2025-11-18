@@ -1,9 +1,9 @@
 // // From https://blog.devops.dev/implementing-infinite-scroll-in-next-js-a-complete-guide-0ce74d5eb57d
-
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { EventInformation } from "./EventCard";
-import EventCardGroups, { getEventCardGroups } from "./EventCardGroups";
+import { useSearchParams } from "next/navigation";
+import EventCardGroups from "./EventCardGroups";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface InfiniteScrollProps {
@@ -14,9 +14,33 @@ interface InfiniteScrollProps {
 }
 
 /**
- * @param {EventInformation} intitialGroups - A list of {limit} number of groups that are intially loaded on this page
+ * Might require changes depending on pagination implementation
+ *
+ * @param {number} offset - The server side page offset
+ * @param {number} limit - The number of event card groups to fetch
+ * @param {string} queryString - Additional query parameters
+ * @returns EventInformation[][]
+ */
+export const getEventCardGroups = async (
+  offset: number,
+  limit: number,
+  queryString: string
+) => {
+  try {
+    const url = `http://127.0.0.1:8000/events?offset=${offset}&limit=${limit}&${queryString}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  } catch (error: unknown) {
+    console.log(error);
+    throw new Error(`An error happened: ${error}`);
+  }
+};
+
+/**
+ * @param {EventInformation[][]} intitialGroups - A list of {limit} number of groups that are intially loaded on this page
  * @param {number} initialPage - The initial offset, typically zero
- * @param {limit} - The number of EventInformation groups being fetched
+ * @param {number} limit - The number of EventInformation groups being fetched
  * @param {number} totalItems - The total number of event groups that can be fetched
  *
  * @returns The component containing all the event cards, with infinite scrolling
@@ -34,6 +58,9 @@ export default function EventCardList({
    * @state {boolean} hasMore - Indicates whether more event groups can be fetched
    * @state {string} error - The error message
    */
+
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
   const [items, setItems] = useState<EventInformation[][]>(initialGroups);
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
@@ -60,10 +87,10 @@ export default function EventCardList({
     if (loading || !hasMore) return;
     setLoading(true);
     setError("");
-    const nextPage = page + 1;
+    const nextPage = page + limit;
 
     try {
-      const result = await getEventCardGroups(nextPage, limit);
+      const result = await getEventCardGroups(nextPage, limit, queryString);
 
       if (!result || result.length === 0) {
         setHasMore(false);
@@ -83,7 +110,7 @@ export default function EventCardList({
     } finally {
       setLoading(false);
     }
-  }, [loading, hasMore, page, limit, totalItems]);
+  }, [loading, hasMore, page, limit, totalItems, queryString]);
 
   // Setup intersection observer
   useEffect(() => {
@@ -111,13 +138,13 @@ export default function EventCardList({
   return (
     <>
       {/* Error message if any */}
-      {error && <p className="text-red-500 text-center my-4">{error}</p>}
+      {/* error && <p className="text-red-500 text-center my-4">{error}</p> */}
 
       {/* Event Card list */}
       <div className="flex flex-col gap-5 my-5">
         {items.map((events, index) => (
           <EventCardGroups
-            key={`${index}-${events[0]?.eventID || index}`}
+            key={`${index}-${events[0]?.id || index}`}
             events={events}
           />
         ))}

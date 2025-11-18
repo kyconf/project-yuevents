@@ -6,7 +6,7 @@ import MenuTemplate from "./MenuTemplate";
  */
 export default function MenuUpcoming() {
   const title = "Upcoming";
-  const dropDownItems: string[] = ["Upcoming", "Past Events"];
+  const dropDownItems: string[] = ["Upcoming", "Past"];
   return (
     <MenuTemplate
       buttonText={title}
