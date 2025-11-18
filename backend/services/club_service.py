@@ -1,30 +1,30 @@
 from fastapi import HTTPException
-from repositories.event_repository import EventRepository
+from repositories.club_repository import ClubRepository
 
-class EventService:
-    def __init__(self, repo: EventRepository = None):
-        self.repo = repo or EventRepository()
+class ClubService:
+    def __init__(self, repo: ClubRepository = None):
+        self.repo = repo or ClubRepository()
 
-    def get_all_events(self, *, limit: int, offset: int):
-        return self.repo.get_all(limit=limit, offset=offset)
+    def get_all_clubs(self):
+        return self.repo.get_all()
 
-    def get_event(self, event_id: str):
-        event = self.repo.get_by_id(event_id)
-        if not event:
-            raise HTTPException(status_code=404, detail="Event not found")
-        return event
+    def get_club(self, club_id: str):
+        club = self.repo.get_by_id(club_id)
+        if not club:
+            raise HTTPException(status_code=404, detail="Club not found")
+        return club
 
-    def create_event(self, event_data: dict):
-        return self.repo.create(event_data)
+    def create_club(self, club_data: dict):
+        return self.repo.create(club_data)
 
-    def update_event(self, event_id: str, event_data: dict):
-        updated_event = self.repo.update(event_id, event_data)
-        if not updated_event:
-            raise HTTPException(status_code=404, detail="Event not found")
-        return updated_event
+    def update_club(self, club_id: str, club_data: dict):
+        updated_club = self.repo.update(club_id, club_data)
+        if not updated_club:
+            raise HTTPException(status_code=404, detail="Club not found")
+        return updated_club
 
-    def delete_event(self, event_id: str):
-        deleted = self.repo.delete(event_id)
+    def delete_club(self, club_id: str):
+        deleted = self.repo.delete(club_id)
         if not deleted:
-            raise HTTPException(status_code=404, detail="Event not found")
-        return {"message": "Event deleted"}
+            raise HTTPException(status_code=404, detail="Club not found")
+        return {"message": "Club deleted"}
