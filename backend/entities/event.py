@@ -16,7 +16,7 @@ class EventBase(BaseModel):
    is_public: bool = True
    slug: Optional[str] = None
    banner: Optional[str] = None
-   club_name: str
+  
 
 
 class EventCreate(EventBase):
@@ -38,8 +38,7 @@ class EventUpdate(BaseModel):
 
 class Event(EventBase):
    id: str
-   created_at: datetime
-   updated_at: datetime
+
 
 
 class EventWithClub(Event):
