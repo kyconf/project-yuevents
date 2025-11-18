@@ -41,8 +41,3 @@ class Club(ClubBase):
     id: str
     created_at: datetime
     updated_at: datetime
-
-class ClubWithEvent(BaseModel):
-    id: str
-    name: str
-    slug: str
