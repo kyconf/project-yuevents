@@ -6,16 +6,6 @@ from uuid import UUID
 
 
 class EventBase(BaseModel):
-    # creator_id: str
-    title: str
-    description: Optional[str]
-    location: Optional[str]
-    start_at: datetime
-    end_at: datetime
-    rsvp_deadline: Optional[datetime]
-    capacity: Optional[int]
-    is_public: bool
-    slug: Optional[str]
    title: str
    description: Optional[str] = None
    location: Optional[str] = None
@@ -26,7 +16,7 @@ class EventBase(BaseModel):
    is_public: bool = True
    slug: Optional[str] = None
    banner: Optional[str] = None
-   club_name: str
+  
 
 
 class EventCreate(EventBase):
@@ -48,8 +38,7 @@ class EventUpdate(BaseModel):
 
 class Event(EventBase):
    id: str
-   created_at: datetime
-   updated_at: datetime
+
 
 
 class EventWithClub(Event):
