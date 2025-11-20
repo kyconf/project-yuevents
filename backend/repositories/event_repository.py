@@ -31,7 +31,8 @@ class EventRepository:
         res = (
             supabase
             .table("events")
-            .select("id,title,description,location,start_at,end_at,is_public,slug,club_id,banner,")
+            .select("id,title,description,location,start_at,end_at,is_public,slug,club_id,banner,"
+            "club:clubs(id,name,slug)")
             .eq("id", event_id)
             .single()
             .execute()
