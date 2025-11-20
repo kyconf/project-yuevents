@@ -7,11 +7,14 @@ from controllers.user_controller import router as user_router
 from controllers.club_controller import router as club_router
 
 app = FastAPI()
-
+origins = [
+    "http://localhost:3000",
+]
 # Allow requests from any origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # <-- allow all origins
+    allow_origins=origins,
+   # allow_origins=["*"],   # <-- allow all origins
     allow_credentials=True,
     allow_methods=["*"],   # <-- allow all HTTP methods
     allow_headers=["*"],   # <-- allow all headers

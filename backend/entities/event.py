@@ -1,3 +1,6 @@
+
+
+
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
@@ -16,6 +19,7 @@ class EventBase(BaseModel):
    is_public: bool = True
    slug: Optional[str] = None
    banner: Optional[str] = None
+
   
 
 
@@ -43,6 +47,3 @@ class Event(EventBase):
 
 class EventWithClub(Event):
    club: ClubWithEvent
-
-
-
