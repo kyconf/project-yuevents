@@ -20,6 +20,7 @@ class EventBase(BaseModel):
    slug: Optional[str] = None
    banner: Optional[str] = None
 
+  
 
 
 class EventCreate(EventBase):

@@ -9,11 +9,6 @@ class UserRole(str, Enum):
     admin = "admin"
     # Add more roles if needed
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
-
 class UserBase(BaseModel):
     username: Optional[str]
     full_name: Optional[str]
