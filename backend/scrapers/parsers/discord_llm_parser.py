@@ -76,7 +76,7 @@ Message:
 \"\"\"{message_content}\"\"\"
 """
 # Currently in the db, end time is non-nullable, so i prompted the model to estimate an end time if missing, but ideally i think this should be nullable too.
-
+    # TODO: Use built-in huggingface scturturing JSON parsing
     completion = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.2:featherless-ai",
         messages=[{"role": "user", "content": prompt}],

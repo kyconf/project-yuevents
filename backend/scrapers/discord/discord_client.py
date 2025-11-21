@@ -16,8 +16,9 @@ client = discord.Client(intents=intents)
 async def start_client() -> None:
     if not client.is_ready():
         await client.login(DISCORD_TOKEN)
-        await client.connect(reconnect=True)
-        await asyncio.sleep(1)
+        asyncio.create_task(client.connect())
+        await client.wait_until_ready()
+        print(f" Bot connected as {client.user}")
 
 
 async def fetch_messages_from_channel(channel_id: int, limit: int = MESSAGE_FETCH_LIMIT) -> list[discord.Message]:
@@ -51,7 +52,3 @@ async def fetch_messages_from_channels(channel_ids: list[int], limit: int = MESS
             all_messages[channel_id] = []
 
     return all_messages
-
-CHANNEL_IDS = os.getenv("DISCORD_CHANNEL_IDS")  # e.g., [123456789012345678, 987654321098765432]
-CHANNEL_IDS = [int(x) for x in CHANNEL_IDS.split(",") if x.strip()]
-asyncio.run(fetch_messages_from_channel(CHANNEL_IDS[0]))
