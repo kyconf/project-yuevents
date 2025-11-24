@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, status, Query
-from typing import List, Any
+from fastapi import APIRouter, HTTPException, status, Query, Depends
+from typing import List, Any, Optional
 from entities.event import Event, EventCreate, EventUpdate, EventWithClub
 from services.event_service import EventService
+
 from fastapi.encoders import jsonable_encoder
 from collections import defaultdict
 from datetime import datetime
@@ -40,7 +41,36 @@ def get_events(
         return matrix  
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"/events failed: {e}")
+    
+@router.get("/calendar", response_model=List[List[Event]])
+def get_monthly_calendar(
+    year: Optional[int] = Query(
+        None, 
+        description="The year to filter by (e.g., 2025). Defaults to current year."
+    ),
+    month: Optional[int] = Query(
+        None, 
+        ge=0, 
+        le=11, 
+        description="0-indexed month (0=Jan, 11=Dec). Defaults to current month."
+    ),
+):
+    """
+    Fetches events for a specific month, grouped by date.
+    Returns a 2D array: [ [Events for Day X], [Events for Day Y] ]
+    """
+    
+    target_year = year if year is not None else datetime.now().year
+    
+    # Use provided month or default to current (convert Python's 1-12 to 0-11)
+    target_month = month if month is not None else (datetime.now().month - 1)
 
+    try:
+        result = service.get_monthly_calendar(target_year, target_month)
+        return result
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 # Only a specific event id queried
 @router.get("/{event_id}", response_model=EventWithClub)
@@ -51,6 +81,7 @@ def get_event(event_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/", response_model=Event, status_code=status.HTTP_201_CREATED)
 def create_event(event: EventCreate):
