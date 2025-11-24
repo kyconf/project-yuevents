@@ -4,7 +4,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
-from .club import ClubWithEvent
+from club import ClubWithEvent
 from uuid import UUID
 
 
