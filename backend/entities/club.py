@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional, Dict
 from enum import Enum
-
+from uuid import UUID
 class ClubJoinPolicy(str, Enum):
     open = "open"
     invite_only = "invite_only"
@@ -10,7 +10,6 @@ class ClubJoinPolicy(str, Enum):
    
 
 class ClubBase(BaseModel):
-    owner_id: str
     name: str
     slug: Optional[str]
     about: Optional[str]
@@ -23,7 +22,7 @@ class ClubBase(BaseModel):
     socials: Optional[Dict]
 
 class ClubCreate(ClubBase):
-    pass
+    owner_id: UUID
 
 class ClubUpdate(BaseModel):
     name: Optional[str]
