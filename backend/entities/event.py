@@ -18,7 +18,7 @@ class EventBase(BaseModel):
    capacity: Optional[int] = Field(default=None, ge=0)
    is_public: bool = True
    slug: Optional[str] = None
-   banner: Optional[str] = None
+   banner: Optional[str] = "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/DefaultBanner.jpg"
 
   
 

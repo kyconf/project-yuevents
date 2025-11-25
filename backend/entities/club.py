@@ -13,8 +13,8 @@ class ClubBase(BaseModel):
     name: str
     slug: Optional[str]
     about: Optional[str]
-    avatar_url: Optional[str]
-    banner_url: Optional[str]
+    avatar_url: Optional[str] = "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/default-avatar-icon-of-social-media-user-vector.jpg"
+    banner_url: Optional[str] = "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/banner-clubs.png"
     is_public: bool
     join_policy: ClubJoinPolicy
     contact_email: Optional[EmailStr]

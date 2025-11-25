@@ -11,6 +11,9 @@ router = APIRouter(prefix="/events", tags=["Events"])
 service = EventService()
 
 
+
+
+
 @router.get("/", response_model=List[List[dict]])  #  innermost layer is json
 def get_events(
     limit: int = Query(10, ge=1, le=100),
@@ -88,6 +91,7 @@ def create_event(event: EventCreate):
     try:
         payload = jsonable_encoder(event, exclude_none=True)
     
+
         row = service.create_event(payload)
         return Event.model_validate(row)                
 

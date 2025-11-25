@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 router = APIRouter(prefix="/clubs", tags=["Clubs"])
 service = ClubService()
 
+
 @router.get("/", response_model=List[Club])
 def get_clubs():
     try:
@@ -27,6 +28,7 @@ def create_club(club: ClubCreate):
     try:
         payload = jsonable_encoder(club, exclude_none=True)
     
+
         row = service.create_club(payload)
         return Club.model_validate(row)  
     except Exception as e:
