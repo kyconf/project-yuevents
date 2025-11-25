@@ -108,6 +108,8 @@ def update_event(event_id: str, event: EventUpdate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# Add additional checks to deletion
 @router.delete("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_event(event_id: str):
     try:
