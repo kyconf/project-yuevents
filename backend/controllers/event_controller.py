@@ -89,7 +89,7 @@ def create_event(event: EventCreate):
         payload = jsonable_encoder(event, exclude_none=True)
     
         row = service.create_event(payload)
-        return Event.model_validate(row)                 # Pydantic → ISO strings   
+        return Event.model_validate(row)                
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -97,7 +97,12 @@ def create_event(event: EventCreate):
 @router.put("/{event_id}", response_model=Event)
 def update_event(event_id: str, event: EventUpdate):
     try:
-        return service.update_event(event_id, event.model_dump(exclude_unset=True))
+
+        payload = jsonable_encoder(event, exclude_none =True)
+
+        update = service.update_event(event_id, payload)
+
+        return Event.model_validate(update)
     except HTTPException:
         raise
     except Exception as e:

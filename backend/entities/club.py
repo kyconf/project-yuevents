@@ -7,7 +7,7 @@ class ClubJoinPolicy(str, Enum):
     open = "open"
     invite_only = "invite_only"
     request = "request"
-    # Add more policies if needed
+   
 
 class ClubBase(BaseModel):
     owner_id: str
