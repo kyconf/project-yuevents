@@ -60,7 +60,7 @@ REM -------------------------------
 REM   Start FastAPI server
 REM -------------------------------
 echo 🚀 Starting FastAPI server...
-start http://127.0.0.1:8000/
+start http://127.0.0.1:8000/docs
 uvicorn main:app --reload
 
 echo.
