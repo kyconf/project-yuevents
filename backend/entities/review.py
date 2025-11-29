@@ -7,7 +7,6 @@ class ReviewBase(BaseModel):
     comment: Optional[str] = None
 
 class ReviewCreate(ReviewBase):
-    profile_id: UUID4
     events_id: UUID4
 
 class ReviewUpdate(BaseModel):
