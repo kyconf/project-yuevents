@@ -3,6 +3,7 @@ import asyncio
 import os
 import sys
 from typing import Dict, List, Callable, Any
+from discord import Intents, Object
 
 # TODO: REALLY NEED to make backend a package to avoid this sys.path hackery
 # --- IMPORT SETUP ---
@@ -39,6 +40,8 @@ except ImportError:
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+STATE_FILE = os.path.join(current_file_dir, "scraper_state.json")
+
 class DiscordScraperService:
     def __init__(
         self, 
@@ -50,15 +53,35 @@ class DiscordScraperService:
         self.fetch_messages_func = fetch_messages_func
         self.parse_event_func = parse_event_func
 
+    def _load_state(self) -> dict:
+        if os.path.exists(STATE_FILE):
+            try:
+                with open(STATE_FILE, 'r') as f:
+                    import json
+                    return json.load(f)
+            except Exception as e:
+                logger.error(f"Error loading state file: {e}")
+        return {}
+    
+    def _save_state(self, state: dict):
+        try:
+            with open(STATE_FILE, 'w') as f:
+                import json
+                json.dump(state, f, indent=4)
+        except Exception as e:
+            logger.error(f"Failed to save state file: {e}")
+
     async def scrape_and_save(self, channel_ids: List[str]):
         if not channel_ids:
             logger.warning("No channels provided.")
             return 0
 
+        state = self._load_state()
+        logger.info(f"Loaded state for {len(state)} channels.")
         logger.info(f"Starting scrape for {len(channel_ids)} channels...")
         
         # 1. Fetch
-        raw_data = await self.fetch_messages_func(channel_ids=channel_ids, limit=10)
+        raw_data = await self.fetch_messages_func(channel_ids=channel_ids, last_known_ids=state, limit=5)
         
         total_events = 0
         
@@ -68,6 +91,23 @@ class DiscordScraperService:
             logger.info(f"Processing {len(messages)}")
             count = await self._process_messages(messages)
             total_events += count
+
+        # 4. Update State (Find the Newest Message ID)
+        # Logic: 
+        # If we used 'after', messages are Oldest -> Newest (Last item is newest)
+        # If we didn't use 'after' (first run), messages are Newest -> Oldest (First item is newest)   
+        used_after = str(channel_id) in state or channel_id in state
+            
+        if used_after:
+            newest_msg = messages[-1] # Last item is newest
+        else:
+            newest_msg = messages[0]  # First item is newest
+            
+        # Save the ID
+        state[str(channel_id)] = newest_msg.id
+            
+        # 5. Persist State to Disk
+        self._save_state(state)
 
         logger.info(f"Scraping run complete. New events: {total_events}")
         return total_events
