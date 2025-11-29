@@ -19,18 +19,18 @@
 ## User Stories (Tracked in Trello) (max 12 marks) 
 
 
-  User Stories Total Mark: 0 / 12
+  User Stories Total Mark: 12 / 12
 
 ---
 ## Tracking on Trello  (max 4 marks) 
 
 
-Tracking on Trello Total Mark: 0 / 15
+Tracking on Trello Total Mark: 15 / 15
 
 ---
 ## Sprint Completion (Max 10 marks) 
  
-    Your Mark: 0 /10
+    Your Mark: 10 /10
 
 ---
 ## Sprint Video Demo (Max 12 marks) 
@@ -40,9 +40,9 @@ Tracking on Trello Total Mark: 0 / 15
 
 ---
 
-** send me your trello board ( the board is not your ptoject and repo name and I can't find it) along with your project name (yuevents) **
+** Good Job! **
 
 ## Total Mark
 
-27 / 64
+64 / 64
 
