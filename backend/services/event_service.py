@@ -1,17 +1,28 @@
 from fastapi import HTTPException
 from repositories.event_repository import EventRepository
 from datetime import date, datetime, time, timezone
-from typing import List, Dict
+from typing import List, Dict, Optional
 import calendar
 from itertools import groupby
 from entities.event import Event
+
 
 class EventService:
     def __init__(self, repo: EventRepository = None):
         self.repo = repo or EventRepository()
 
-    def get_all_events(self, *, limit: int, offset: int):
-        return self.repo.get_all(limit=limit, offset=offset)
+    def get_all_events(
+        self,
+        search: Optional[str] = None,
+        club_ids: Optional[List[str]] = None,  # <-- CHANGED
+    ) -> List[dict]:
+
+        return self.repo.get_all(
+            search=search,
+            club_ids=club_ids,   # <-- CHANGED
+            limit=1000,
+            offset=0,
+        )
 
     def get_event(self, event_id: str):
         event = self.repo.get_by_id(event_id)

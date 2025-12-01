@@ -12,39 +12,53 @@ service = EventService()
 
 
 
-
-
-@router.get("/", response_model=List[List[dict]])  #  innermost layer is json
+@router.get("/", response_model=List[List[dict]])
 def get_events(
     limit: int = Query(10, ge=1, le=100),
     offset: int = Query(0, ge=0),
-    columns: List[str] = Query(["id", "title", "start_at", "end_at", "location", "is_public", "slug", "banner", "club"], alias="columns"),
+    search: Optional[str] = Query(
+        None,
+        description="Search term to filter events by title/description",
+    ),
+    club_ids: Optional[List[str]] = Query(
+        None,
+        alias="club_id",  # frontend: ?club_id=id1&club_id=id2
+        description="One or more club IDs",
+    ),
+    columns: List[str] = Query(
+        ["id", "title", "description", "start_at", "end_at", "location",
+         "is_public", "slug", "banner", "club"],
+        alias="columns",
+    ),
 ):
     try:
-  
-        items = service.get_all_events(limit=limit, offset=offset)
-        rows = jsonable_encoder(items, exclude_none=False)  
+        items = service.get_all_events(search=search, club_ids=club_ids)
+        rows = jsonable_encoder(items, exclude_none=False)
 
         grouped_events = defaultdict(list)
         for ev in rows:
-          
-            start_date = str(ev.get("start_at")).split("T")[0]  
+            start_at = ev.get("start_at")
+            if start_at is None:
+                continue
+            start_date = str(start_at).split("T")[0]
             grouped_events[start_date].append(ev)
 
-        matrix = []
+        all_groups: List[List[dict]] = []
+        for date in sorted(grouped_events.keys()):
+            events_for_date = grouped_events[date]
+            group = [{col: ev.get(col) for col in columns} for ev in events_for_date]
+            all_groups.append(group)
 
-        for date, events in grouped_events.items():
-            event_group = []
-            for ev in events:
-                
-                #append to dictionaries as json
-                event_group.append({col: ev.get(col) for col in columns})
-            matrix.append(event_group)
+        start = offset
+        end = offset + limit
+        sliced_groups = all_groups[start:end]
 
-        return matrix  
+        return sliced_groups
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"/events failed: {e}")
     
+
 @router.get("/calendar", response_model=List[List[Event]])
 def get_monthly_calendar(
     year: Optional[int] = Query(
@@ -75,6 +89,7 @@ def get_monthly_calendar(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
+
 # Only a specific event id queried
 @router.get("/{event_id}", response_model=EventWithClub)
 def get_event(event_id: str):
@@ -90,22 +105,17 @@ def get_event(event_id: str):
 def create_event(event: EventCreate):
     try:
         payload = jsonable_encoder(event, exclude_none=True)
-    
-
         row = service.create_event(payload)
-        return Event.model_validate(row)                
-
+        return Event.model_validate(row)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.put("/{event_id}", response_model=Event)
 def update_event(event_id: str, event: EventUpdate):
     try:
-
-        payload = jsonable_encoder(event, exclude_none =True)
-
+        payload = jsonable_encoder(event, exclude_none=True)
         update = service.update_event(event_id, payload)
-
         return Event.model_validate(update)
     except HTTPException:
         raise
@@ -122,4 +132,3 @@ def delete_event(event_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
