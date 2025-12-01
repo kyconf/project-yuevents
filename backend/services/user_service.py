@@ -28,3 +28,6 @@ class UserService:
         if not deleted:
             raise HTTPException(status_code=404, detail="User not found")
         return {"message": "User deleted"}
+
+    def login_user(self, email: str, password: str):
+        return self.repo.login(email, password)
