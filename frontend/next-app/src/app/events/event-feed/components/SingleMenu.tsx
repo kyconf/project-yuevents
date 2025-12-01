@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 
 interface Prop {
   children: string[];
+  ids?: string[];
   isOpen: "flex" | "hidden";
   query: string;
 }
@@ -17,8 +18,9 @@ interface Prop {
  * @returns A single option menu
  */
 const SingleMenu = (props: Prop) => {
-  const { children, isOpen, query } = props;
+  const { children, ids, isOpen, query } = props;
   const menuItems = children || [];
+  const menuIds = ids || menuItems;
   const searchParams = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -53,16 +55,19 @@ const SingleMenu = (props: Prop) => {
       {/* Hidden input for the current query */}
       <input type="hidden" name={query} value="" />
 
-      {menuItems.map((child) => (
-        <button
-          key={child}
-          className="hover:bg-zinc-300 hover:text-zinc-500 px-4 py-1"
-          type="button"
-          onClick={() => handleButtonClick(child)}
-        >
-          {child}
-        </button>
-      ))}
+      {menuItems.map((child, index) => {
+        const id = menuIds[index];
+        return (
+          <button
+            key={id}
+            className="hover:bg-zinc-300 hover:text-zinc-500 px-4 py-1"
+            type="button"
+            onClick={() => handleButtonClick(id)}
+          >
+            {child}
+          </button>
+        );
+      })}
     </Form>
   );
 };

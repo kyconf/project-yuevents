@@ -88,7 +88,7 @@ const EventCard = ({
       <div className="flex flex-col flex-1 gap-2 p-2">
         <Link
           className="text-sky-800 text-xl w-fit"
-          href={`/events/event-feed/${id}`}
+          href={"/events/event-feed/" + id}
         >
           {title}
         </Link>

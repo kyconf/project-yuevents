@@ -10,8 +10,6 @@ from datetime import datetime
 router = APIRouter(prefix="/events", tags=["Events"])
 service = EventService()
 
-
-
 @router.get("/", response_model=List[List[dict]])
 def get_events(
     limit: int = Query(10, ge=1, le=100),
@@ -20,6 +18,7 @@ def get_events(
         None,
         description="Search term to filter events by title/description",
     ),
+
     club_ids: Optional[List[str]] = Query(
         None,
         alias="club_id",  # frontend: ?club_id=id1&club_id=id2
@@ -32,23 +31,28 @@ def get_events(
     ),
 ):
     try:
+        # 1) Filter by club_id and search INSIDE the service
         items = service.get_all_events(search=search, club_ids=club_ids)
         rows = jsonable_encoder(items, exclude_none=False)
 
+        # 2) Group by start date
         grouped_events = defaultdict(list)
         for ev in rows:
             start_at = ev.get("start_at")
             if start_at is None:
                 continue
+            # "YYYY-MM-DD" from ISO or datetime
             start_date = str(start_at).split("T")[0]
             grouped_events[start_date].append(ev)
 
+        # 3) Build list of groups, sorted by date
         all_groups: List[List[dict]] = []
         for date in sorted(grouped_events.keys()):
             events_for_date = grouped_events[date]
             group = [{col: ev.get(col) for col in columns} for ev in events_for_date]
             all_groups.append(group)
 
+        # 4) Apply offset/limit on the GROUPS (outer list of the 2D array)
         start = offset
         end = offset + limit
         sliced_groups = all_groups[start:end]

@@ -10,6 +10,7 @@ class ClubJoinPolicy(str, Enum):
    
 
 class ClubBase(BaseModel):
+    owner_id: str
     name: str
     slug: Optional[str]
     about: Optional[str]

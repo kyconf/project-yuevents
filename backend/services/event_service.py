@@ -6,7 +6,6 @@ import calendar
 from itertools import groupby
 from entities.event import Event
 
-
 class EventService:
     def __init__(self, repo: EventRepository = None):
         self.repo = repo or EventRepository()
