@@ -2,9 +2,10 @@ from fastapi import APIRouter, HTTPException, status
 from typing import List
 from entities.club import Club, ClubCreate, ClubUpdate
 from services.club_service import ClubService
-
+from fastapi.encoders import jsonable_encoder
 router = APIRouter(prefix="/clubs", tags=["Clubs"])
 service = ClubService()
+
 
 @router.get("/", response_model=List[Club])
 def get_clubs():
@@ -25,7 +26,11 @@ def get_club(club_id: str):
 @router.post("/", response_model=Club, status_code=status.HTTP_201_CREATED)
 def create_club(club: ClubCreate):
     try:
-        return service.create_club(club.model_dump())
+        payload = jsonable_encoder(club, exclude_none=True)
+    
+
+        row = service.create_club(payload)
+        return Club.model_validate(row)  
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

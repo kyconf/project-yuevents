@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
@@ -8,6 +7,11 @@ class UserRole(str, Enum):
     user = "user"
     admin = "admin"
     # Add more roles if needed
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
 
 class UserBase(BaseModel):
     username: Optional[str]

@@ -38,6 +38,18 @@ class EventRepository:
             .execute()
         )
         return res.data
+    
+    def get_by_date_range(self, start_iso: str, end_iso: str):
+        """ 
+        Fetches from start date to end date inclusive
+        """
+        response = supabase.table("events")\
+        .select("*")\
+        .gte("start_at", start_iso)\
+        .lte("start_at", end_iso)\
+        .execute()
+
+        return response.data
 
     def create(self, payload: dict) -> dict:
         res = supabase.table("events").insert(payload).execute()
