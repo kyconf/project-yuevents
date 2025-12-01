@@ -1,16 +1,30 @@
-from pydantic import BaseModel, Field, UUID4
+from pydantic import BaseModel, Field, UUID4, field_validator
 from datetime import datetime
 from typing import Optional
 
 class ReviewBase(BaseModel):
-    rating: int = Field(..., ge=1, le=5, description="Rating must be between 1 and 5")
+    rating: float = Field(..., ge=1, le=5)
+
+    @field_validator("rating")
+    def validate_step(cls, v):
+        if (v * 2) % 1 != 0:
+            raise ValueError("Rating must be in increments of 0.5")
+        return v
     comment: Optional[str] = None
 
 class ReviewCreate(ReviewBase):
     events_id: UUID4
 
 class ReviewUpdate(BaseModel):
-    rating: Optional[int] = Field(None, ge=1, le=5)
+    rating: Optional[float] = Field(None, ge=1, le=5)
+
+    @field_validator("rating")
+    def validate_half_step(cls, v):
+        if v is None:
+            return v
+        if (v * 2) % 1 != 0:
+            raise ValueError("Rating must be in increments of 0.5")
+        return v
     comment: Optional[str] = None
 
 class Review(ReviewBase):

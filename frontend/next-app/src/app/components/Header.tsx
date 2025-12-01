@@ -1,10 +1,14 @@
+"use client"
+import {useEffect, useState} from "react"
 import Image from "next/image";
 import Images from "@/app/assets/images.jpg";
 import Link from "next/link";
 import HeaderEvents from "./HeaderEvents";
+import { useAuth } from "../events/event-feed/[eventID]/components/userAuth";
 
 function Header() {
-  const isLoggedIn = false;
+  const {isLoggedIn, user, token} = useAuth();
+
   return (
     <header className="sticky top-0 bg-gradient-to-br from-black to-blue-800 text-white p-4 flex items-center justify-between gap-6 w-full z-20">
       <div className="">

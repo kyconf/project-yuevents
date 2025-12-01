@@ -1,5 +1,6 @@
 'use client'
 import { useState } from "react";
+import {supabase} from "../../../../../supabaseClient"
 import EventBasicInfo from "./components/postEventBasicInfo";
 import DateAndTime from "./components/postEventDateAndTime";
 import EventSettings from "./components/postEventSettings";
@@ -7,7 +8,19 @@ import EventBanner from "./components/postEventBanner";
 import SubmitButton from "./components/postSubmitButton";
 import PostEventHeader from "./components/postEventHeader";
 export default function PostEventPage() {
-  const [field, setField] = useState({
+  const [field, setField] = useState<{
+     title: string;
+     description: string;
+     location: string;
+     start_at: string;
+     end_at: string;
+     rsvp_deadline: string;
+     capacity: number;
+     is_public: boolean;
+     slug: string;
+     banner: string | File; 
+     club_id: string;
+  }>({
     title: "",
     description: "",
     location: "",
@@ -17,7 +30,7 @@ export default function PostEventPage() {
     capacity: 0,
     is_public: false,
     slug: "",
-    banner: "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/FurryBanner.png",
+    banner: "",
     club_id: "3c8366fb-c02d-4baa-9de3-ac230ac8be4a"
   });
 
@@ -26,34 +39,74 @@ export default function PostEventPage() {
   };
 
   const handleSubmit = async () => {
-    const submitData = {
-  ...field,
-  start_at: new Date(field.start_at).toISOString(),
-  end_at: new Date(field.end_at).toISOString(),
-  rsvp_deadline: new Date(field.rsvp_deadline).toISOString(),
-};
-    try {
-        const res = await fetch("http://127.0.0.1:8000/events/", {
-            method: "POST",
-            headers: {
-             "Content-Type": "application/json"  
-                      },
-            body: JSON.stringify(submitData)
-          
-        });
-        if(res.ok){
-            console.log("Event submitted successfully!");
-            console.log("Submitting event:", field);
-            alert("Event submitted! Check console for data.");
-        } else {
-            console.log(JSON.stringify(field))
-            console.log("Submit failed");
-        }
-    } catch(err) {
-        console.error(err);
+  let bannerUrl = field.banner;
+  
+  try {
+
+    if (field.banner instanceof File) {
+      const fileName = `${Date.now()}-${field.banner.name}`;
+      
+      const { data, error } = await supabase.storage
+        .from('test_bucket')
+        .upload(fileName, field.banner, { upsert: true });
+
+      if (error) {
+        console.error('Upload error:', error);
+        alert('Failed to upload banner');
+        return;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('test_bucket')
+        .getPublicUrl(fileName);
+      
+      bannerUrl = urlData.publicUrl;
+    }
+
+
+    const eventData = {
+      title: field.title,
+      description: field.description || "",
+      location: field.location || "",
+      start_at: new Date(field.start_at).toISOString(),
+      end_at: new Date(field.end_at).toISOString(),
+      rsvp_deadline: new Date(field.rsvp_deadline).toISOString(),
+      capacity: Number(field.capacity),
+      is_public: field.is_public,
+      slug: field.slug || "",
+      club_id: field.club_id,
+      banner: typeof bannerUrl === 'string' ? bannerUrl : ""
+    };
+
+    console.log('Sending data:', eventData); 
+
+    const res = await fetch("http://127.0.0.1:8000/events/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify(eventData) 
+    });
+
+    const responseData = await res.json();
+    console.log('Response:', responseData);
+
+    if (res.ok) {
+      alert("Event created successfully!");
+      window.location.href = '/events';
+    } else {
+      console.error("Submit failed:", responseData);
+      alert(`Failed: ${JSON.stringify(responseData)}`);
+    }
     
+  } catch (err) {
+    console.error('Error submitting event:', err);
+    alert('An error occurred while submitting the event');
+  }
 };
-  };
+    
+
 
   return (
     <div className="max-w-6xl mx-auto py-10">

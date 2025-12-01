@@ -1,5 +1,5 @@
 "use client";
-
+import {supabase} from "../../../../supabaseClient"
 import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
 import { useRef } from "react";
 import { motion } from "framer-motion";
@@ -113,9 +113,14 @@ function LogIn() {
       console.log("Token saved:", localStorage.getItem("authToken"));
       console.log("User ID:", localStorage.getItem("userId"));
       console.log("Username:", localStorage.getItem("username"));
+      
+      const { error: supabaseError } = await supabase.auth.setSession({
+      access_token: data.supabase_session.access_token,
+      refresh_token: data.supabase_session.refresh_token,
+    });
 
       // Redirect to event feed
-      router.push("/events/event-feed");
+      router.push("/");
     } catch (err) {
       console.error("Login error:", err);
       setError("An error occurred during login. Please try again.");
@@ -183,7 +188,7 @@ function LogIn() {
 
           {error && (
             <div className="bg-red-500/20 border border-red-500 text-red-200 p-3 rounded mb-4">
-              {error}
+                {typeof error === "string" ? error : JSON.stringify(error)}
             </div>
           )}
 

@@ -9,9 +9,9 @@ interface EventDescription{
 }
 
 export default function EventDescription({description, rsvp_deadline, capacity, is_public, slug, created_at, updated_at}:EventDescription){
-    return(<div className="mt-15 w-300 ">
+    return(<div className="ml-5 mt-10 w-220 max-h-[600px] overflow-auto scrollbar-none">
         <h1 className="font-bold">Description</h1>
-        <p className="mt-2">{description}</p>
+        <p className="mt-2 wrap-break-wordbreak-words ">{description}</p>
 
         <br></br>
         <h1 className="font-bold">📅 RSVP Deadline</h1>

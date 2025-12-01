@@ -26,7 +26,7 @@ interface Event {
   club_id: string,
 
 }
-async function fetchEvents(limit: number = 5, offset: number = 0): Promise<Event[]> {
+async function fetchEvents(limit: number = 5, offset: number = 0): Promise<Event[][]> {
   const res = await fetch(`http://localhost:8000/events?limit=${limit}&offset=${offset}`, {
     cache: 'no-store'
   });
@@ -34,7 +34,7 @@ async function fetchEvents(limit: number = 5, offset: number = 0): Promise<Event
   if (!res.ok) {
     throw new Error(`Failed to fetch events: ${res.status}`);
   }
-  const data: Event[] = await res.json();
+  const data: Event[][] = await res.json();
   console.log(data)
   return data;
 }

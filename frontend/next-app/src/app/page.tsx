@@ -14,8 +14,8 @@ import "@/app/globals.css";
 
 export default function Home() {
   // create refs for section
-  const aboutRef = useRef<HTMLDivElement>(null);
-  const featureRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement | null>(null);
+  const featureRef = useRef<HTMLDivElement | null>(null);
 
   // func scroll to section
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
