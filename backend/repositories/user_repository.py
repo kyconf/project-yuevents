@@ -1,17 +1,13 @@
-from typing import Optional, Dict, Any, List 
-from time import sleep 
+from typing import Optional, Dict, Any, List
+from time import sleep
 from supabase_client import supabase
 
-class UserRepository: 
-    def get_all(self): 
+class UserRepository:
+    def get_all(self):
         return supabase.table("profiles").select("*").execute().data
 
     def get_by_id(self, user_id: str):
         res = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
-        return res.data
-
-    def get_by_email(self, user_email: str):
-        res = supabase.table("profiles").select("*").eq("email", user_email).single().execute()
         return res.data
 
     # NEW: simple create() that extracts email/password and forwards the rest
@@ -35,35 +31,29 @@ class UserRepository:
         if "avatar_url" in profile_fields:
             metadata["avatar_url"] = profile_fields["avatar_url"]
 
-        # Create auth user (pass metadata so trigger can use it)
+        # 1) Create auth user (pass metadata so trigger can use it)
         payload = {"email": email, "password": password}
         if metadata:
             payload["options"] = {"data": metadata}
 
-        # ✅ Correct way to call supabase.auth.sign_up
-        result = supabase.auth.sign_up(payload)
+        data, error = supabase.auth.sign_up(payload)
+        if error:
+            raise RuntimeError(str(error))
 
-        # The result has `.user` and `.session`
-        user = result.user
-        if not user:
-            raise RuntimeError("User creation failed — no user returned from Supabase")
+        user_id = data.user.id
 
-        user_id = user.id
-
-        # Wait briefly for Supabase trigger to insert into 'profiles'
-        for _ in range(10):
+        # 2) Wait briefly for the trigger to insert profiles row, then patch extra fields
+        for _ in range(10):  # up to ~2s
             prof = self.get_by_id(user_id)
             if prof:
                 break
             sleep(0.2)
 
-        # Update extra fields if any
         if profile_fields:
             supabase.table("profiles").update(profile_fields).eq("id", user_id).execute()
 
-        # Return the final profile row
+        # Return the final profile
         return self.get_by_id(user_id)
-
 
     def update(self, user_id: str, user_data: dict):
         res = supabase.table("profiles").update(user_data).eq("id", user_id).execute()
@@ -72,21 +62,3 @@ class UserRepository:
     def delete(self, user_id: str):
         res = supabase.table("profiles").delete().eq("id", user_id).execute()
         return res.data
-
-    def login(self, email: str, password: str):
-        """Authenticate user using Supabase Auth."""
-        result = supabase.auth.sign_in_with_password({
-            "email": email,
-            "password": password
-        })
-
-        if not result or not result.user:
-            raise RuntimeError("Invalid credentials")
-
-        # Return both auth and profile info
-        user_id = result.user.id
-        profile = self.get_by_id(user_id)
-        return {
-            "session": result.session,  # contains access_token, refresh_token, etc.
-            "user": profile
-        }

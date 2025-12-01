@@ -1,18 +1,12 @@
 from fastapi import HTTPException
 from repositories.club_repository import ClubRepository
-from typing import List, Optional
+
 class ClubService:
     def __init__(self, repo: ClubRepository = None):
         self.repo = repo or ClubRepository()
 
-    def get_all_clubs(
-        self,
-        search: Optional[str] = None,
-        limit: int = 20,
-        offset: int = 0,
-    ) -> List[dict]:
-        return self.repo.get_all(search=search, limit=limit, offset=offset)
-
+    def get_all_clubs(self):
+        return self.repo.get_all()
 
     def get_club(self, club_id: str):
         club = self.repo.get_by_id(club_id)

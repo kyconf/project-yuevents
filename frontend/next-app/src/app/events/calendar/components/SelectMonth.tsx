@@ -1,6 +1,7 @@
 "use client";
+
 import Form from "next/form";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import { SlArrowDown } from "react-icons/sl";
 
@@ -9,13 +10,11 @@ import { SlArrowDown } from "react-icons/sl";
  * @returns Button with dropdown menu to select month
  */
 const SelectMonth = () => {
-  const searchParams = useSearchParams();
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    const monthParam = searchParams.get("month");
-    return monthParam !== null ? Number(monthParam) : new Date().getMonth();
-  });
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [isMonthOpen, setIsMonthOpen] = useState(false);
+  const searchParams = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
   const pathName = usePathname();
 
   const months = [
@@ -33,15 +32,7 @@ const SelectMonth = () => {
     "December",
   ];
 
-  // Update selectedMonth when URL params change
-  useEffect(() => {
-    const monthParam = searchParams.get("month");
-    if (monthParam !== null) {
-      setSelectedMonth(Number(monthParam));
-    }
-  }, [searchParams]);
-
-  // When an element in the dropdown is clicked, modify the query and submit the form
+  // When an element in the single option is clicked, modify the query and submit the form
   const handleButtonClick = (value: string) => {
     if (formRef.current) {
       // Set the hidden input value
@@ -56,6 +47,10 @@ const SelectMonth = () => {
     }
   };
 
+  useEffect(() => {
+    router.push(pathName);
+  }, [router]);
+
   return (
     <div className="relative">
       <button
@@ -67,17 +62,17 @@ const SelectMonth = () => {
       {isMonthOpen && (
         <Form
           ref={formRef}
-          action={pathName}
+          action="/events/calendar"
           className="absolute z-10 mt-1 w-40 bg-gray-800 border border-yellow-500 rounded max-h-60 overflow-y-auto"
         >
-          {/* Preserve all existing search params EXCEPT month */}
+          {/* Preserve all existing search params EXCEPT the current query param */}
           {Array.from(searchParams.entries())
             .filter(([key]) => key !== "month")
             .map(([key, value]) => (
               <input key={key} type="hidden" name={key} value={value} />
             ))}
 
-          {/* Hidden input for month */}
+          {/* Hidden input for the current query */}
           <input type="hidden" name="month" value="" />
 
           {months.map((month, index) => (

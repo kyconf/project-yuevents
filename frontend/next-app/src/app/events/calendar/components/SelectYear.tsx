@@ -1,7 +1,7 @@
 "use client";
 
 import Form from "next/form";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import { SlArrowDown } from "react-icons/sl";
 
@@ -13,8 +13,9 @@ const SelectYear = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isYearOpen, setIsYearOpen] = useState(false);
   const searchParams = useSearchParams();
-  const pathName = usePathname();
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+  const pathName = usePathname();
 
   const years = Array.from(
     { length: 20 },
@@ -36,13 +37,9 @@ const SelectYear = () => {
     }
   };
 
-  // Update selectedMonth when URL params change
   useEffect(() => {
-    const yearParam = searchParams.get("year");
-    if (yearParam !== null) {
-      setSelectedYear(Number(yearParam));
-    }
-  }, [searchParams]);
+    router.push(pathName);
+  }, [router]);
 
   return (
     <div className="relative">
@@ -55,7 +52,7 @@ const SelectYear = () => {
       {isYearOpen && (
         <Form
           ref={formRef}
-          action={pathName}
+          action="/events/calendar"
           className="absolute z-10 mt-1 w-32 bg-gray-800 border border-yellow-500 rounded max-h-60 overflow-y-auto"
         >
           {/* Preserve all existing search params EXCEPT the current query param */}

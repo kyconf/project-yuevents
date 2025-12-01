@@ -1,7 +1,6 @@
 import React from "react";
 import SelectMonth from "./SelectMonth";
 import SelectYear from "./SelectYear";
-import ResetQueryButton from "../../event-feed/components/ResetQueryButton";
 
 /**
  *
@@ -14,7 +13,6 @@ const DateSelection = () => {
       <SelectMonth />
       {/* Year Dropdown */}
       <SelectYear />
-      <ResetQueryButton />
     </div>
   );
 };
