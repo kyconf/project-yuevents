@@ -1,19 +1,40 @@
 import os, json, sys
 from huggingface_hub import InferenceClient
 from dotenv import load_dotenv
+from datetime import datetime
 load_dotenv()
 # TODO: Make the backend folder a package to load the env once at the root
+
+# --- PATH SETUP (Condensed) ---
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_backend = os.path.normpath(os.path.join(current_dir, '..', '..'))
+sys.path.extend([
+    root_backend, 
+    os.path.join(root_backend, 'entities'),
+])
+# ------------------------------
+from event import EventBase
 
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 if not HUGGINGFACE_API_KEY:
     raise RuntimeError("Please set HUGGINGFACE_API_KEY in environment")
+DEFAULT_CLUB_ID = os.getenv("DEFAULT_CLUB_ID")
+if not DEFAULT_CLUB_ID:
+    logger.warning("⚠️ DEFAULT_CLUB_ID not set in .env. Events will likely fail validation.")
 
 client = InferenceClient(api_key=HUGGINGFACE_API_KEY)
 
 def parse_message_llm(message_content: str) -> dict:
+
+    
+    schema = EventBase.model_json_schema()
+    current_time = datetime.now()
+    current_iso = current_time.isoformat()
+    current_day = current_time.strftime("%A")
+
     prompt = f"""
 You are an assistant that extracts event information from unstructured Discord messages. You must respond with a JSON object only, following these strict guidelines:
-Unless otherwise given permission to do so by the user, you must NOT hallucinate any information.
+Unless otherwise given permission to do so by the user, you must NOT hallucinate any information. Current Reference Time: {current_iso} (Day: {current_day})
 Given the following message, extract and return only **valid JSON object** only with absolutely zero commentary matching this Pydantic schema:
 
 EventCreate:
@@ -27,6 +48,7 @@ EventCreate:
 "capacity": int | null,
 "is_public": bool,
 "slug": str
+"banner": 
 }}
 
 Important rules:
@@ -54,6 +76,7 @@ Message: "Club movie night this Friday 7pm at Curtis Lecture Hall."
   "capacity": null,
   "is_public": true,
   "slug": "club-movie-night-2025-11-14"
+  "banner": null
 }}
 
 Message: "End of semester mixer — RSVP before Dec 10!"
@@ -68,6 +91,7 @@ Message: "End of semester mixer — RSVP before Dec 10!"
   "capacity": null,
   "is_public": true,
   "slug": "end-of-semester-mixer"
+  "banner": null
 }}
 
 Now extract the event information from this message:
@@ -80,11 +104,32 @@ Message:
     completion = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.2:featherless-ai",
         messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object", "schema": schema},
+        temperature=0.1, # Keep strict
+        max_tokens=500
     )
 
     text = completion.choices[0].message.content
+    # text = """
+    # {
+    #     "title": "Test Movie Night",
+    #     "description": "This is a mocked response to test ID injection.",
+    #     "location": "Virtual",
+    #     "start_at": "2025-11-20T18:00:00",
+    #     "end_at": "2025-11-20T20:00:00",
+    #     "rsvp_deadline": null,
+    #     "capacity": null,
+    #     "is_public": true,
+    #     "slug": "test-movie-night",
+    #     "banner": null
+    # }
+    # """
+
     try:
         parsed = json.loads(text)
+        parsed['club_id'] = DEFAULT_CLUB_ID  # Assign default club ID
+        print(DEFAULT_CLUB_ID)
+        print(parsed)
     except json.JSONDecodeError:
         raise ValueError(f"LLM returned invalid JSON: {text}")
     return parsed

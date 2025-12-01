@@ -63,7 +63,7 @@ async def main():
 
     # 3. Run the scraper
     # This will: Fetch -> Parse -> Call mock_service.create_event() -> Print
-    await scraper.scrape_and_save(channel_ids)
+    await scraper.scrape()
 
 if __name__ == "__main__":
     try:

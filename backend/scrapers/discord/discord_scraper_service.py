@@ -1,136 +1,115 @@
 import logging
-import asyncio
 import os
 import sys
-from typing import Dict, List, Callable, Any
-from discord import Intents, Object
+import json
+from typing import List, Any
 
-# TODO: REALLY NEED to make backend a package to avoid this sys.path hackery
-# --- IMPORT SETUP ---
-current_file_dir = os.path.dirname(os.path.abspath(__file__))
+# --- PATH SETUP (Condensed) ---
+current_dir = os.path.dirname(os.path.abspath(__file__))
+root_backend = os.path.normpath(os.path.join(current_dir, '..', '..'))
+sys.path.extend([
+    root_backend, 
+    os.path.join(root_backend, 'services'),
+    os.path.join(root_backend, 'entities'),
+    os.path.join(current_dir, '..'),          # Base Scraper
+    os.path.join(current_dir, '..', 'parsers') # Parsers
+])
+# ------------------------------
 
-# 1. Import Services (../../services)
-services_dir = os.path.normpath(os.path.join(current_file_dir, '..', '..', 'services'))
-if services_dir not in sys.path:
-    sys.path.append(services_dir)
-
-# 2. Import Parsers (../parsers)
-parsers_dir = os.path.normpath(os.path.join(current_file_dir, '..', 'parsers'))
-if parsers_dir not in sys.path:
-    sys.path.append(parsers_dir)
-
-# 3. Import Entities (../../entities)
-entities_dir = os.path.normpath(os.path.join(current_file_dir, '..', '..', 'entities'))
-if entities_dir not in sys.path:
-    sys.path.append(entities_dir)
-
-# Now we can import safely
 from event_service import EventService
 from parsing_router import hybrid_parse_event
+from base_scraper import BaseScraper 
 
 try:
     import discord_client
 except ImportError:
-    # If running from a different root, we might need to append current dir
-    if current_file_dir not in sys.path:
-        sys.path.append(current_file_dir)
+    sys.path.append(current_dir)
     import discord_client
-# --------------------
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+STATE_FILE = os.path.join(current_dir, "scraper_state.json")
 
-STATE_FILE = os.path.join(current_file_dir, "scraper_state.json")
-
-class DiscordScraperService:
-    def __init__(
-        self, 
-        event_service: EventService,
-        fetch_messages_func: Callable = discord_client.fetch_messages_from_channels,
-        parse_event_func: Callable[[str], dict] = hybrid_parse_event
-    ):
+class DiscordScraperService(BaseScraper):
+    def __init__(self, event_service: EventService):
         self.event_service = event_service
-        self.fetch_messages_func = fetch_messages_func
-        self.parse_event_func = parse_event_func
+        self.fetch_func = discord_client.fetch_messages_from_channels
+        self.parse_func = hybrid_parse_event
+
+        self.default_club_id = os.getenv("DEFAULT_CLUB_ID")
+
+    async def scrape(self) -> dict:
+        """Main Entry Point: Orchestrates the Fetch -> Parse -> Save flow."""
+        try:
+            # 1. Configuration
+            channel_ids = self._get_channel_ids()
+            if not channel_ids:
+                return {"platform": "Discord", "status": "skipped", "new_events": 0}
+
+            # 2. Execution
+            state = self._load_state()
+            raw_data = await self.fetch_func(channel_ids=channel_ids, last_known_ids=state)
+            
+            total_events = 0
+            
+            # 3. Processing Loop
+            for channel_id, messages in raw_data.items():
+                if not messages: continue
+
+                # Save Events
+                total_events += await self._process_messages(messages)
+                
+                # Update State (Calculate newest message ID)
+                self._update_channel_state(state, channel_id, messages)
+
+            # 4. Cleanup
+            self._save_state(state)
+            return {"platform": "Discord", "status": "success", "new_events": total_events}
+
+        except Exception as e:
+            logger.error(f"[Discord] Critical Failure: {e}", exc_info=True)
+            return {"platform": "Discord", "status": "error", "error": str(e)}
+
+    # --- HELPER METHODS (Keep the main logic clean) ---
+
+    def _get_channel_ids(self) -> List[int]:
+        ids_str = os.getenv("DISCORD_CHANNEL_IDS", "")
+        return [int(x) for x in ids_str.split(",") if x.strip()]
+
+    def _update_channel_state(self, state: dict, channel_id: int, messages: List[Any]):
+        """Decides which message ID is the 'newest' based on fetch order."""
+        # If we used 'after' (key exists in state), Discord returns Oldest->Newest.
+        # If first run, Discord returns Newest->Oldest.
+        used_after_param = str(channel_id) in state or channel_id in state
+        
+        newest_msg = messages[-1] if used_after_param else messages[0]
+        state[str(channel_id)] = newest_msg.id
+
+    async def _process_messages(self, messages: List[Any]) -> int:
+        count = 0
+        for msg in messages:
+            if not msg.content: continue
+            try:
+                parsed = self.parse_func(msg.content)
+                self.event_service.create_event(parsed.copy())
+                count += 1
+            except Exception:
+                pass # Skip unparsable messages silently
+        return count
 
     def _load_state(self) -> dict:
         if os.path.exists(STATE_FILE):
             try:
                 with open(STATE_FILE, 'r') as f:
-                    import json
-                    return json.load(f)
+                    data = json.load(f)
+                    # Ensure all Message IDs are integers
+                    return {k: int(v) for k, v in data.items() if v is not None}
             except Exception as e:
-                logger.error(f"Error loading state file: {e}")
+                logger.warning(f"State file exists but could not be loaded: {e}")
         return {}
-    
+
+
     def _save_state(self, state: dict):
         try:
-            with open(STATE_FILE, 'w') as f:
-                import json
-                json.dump(state, f, indent=4)
+            with open(STATE_FILE, 'w') as f: json.dump(state, f, indent=4)
         except Exception as e:
-            logger.error(f"Failed to save state file: {e}")
-
-    async def scrape_and_save(self, channel_ids: List[str]):
-        if not channel_ids:
-            logger.warning("No channels provided.")
-            return 0
-
-        state = self._load_state()
-        logger.info(f"Loaded state for {len(state)} channels.")
-        logger.info(f"Starting scrape for {len(channel_ids)} channels...")
-        
-        # 1. Fetch
-        raw_data = await self.fetch_messages_func(channel_ids=channel_ids, last_known_ids=state, limit=5)
-        
-        total_events = 0
-        
-        # 2. Process
-        for channel_id, messages in raw_data.items():
-                
-            logger.info(f"Processing {len(messages)}")
-            count = await self._process_messages(messages)
-            total_events += count
-
-        # 4. Update State (Find the Newest Message ID)
-        # Logic: 
-        # If we used 'after', messages are Oldest -> Newest (Last item is newest)
-        # If we didn't use 'after' (first run), messages are Newest -> Oldest (First item is newest)   
-        used_after = str(channel_id) in state or channel_id in state
-            
-        if used_after:
-            newest_msg = messages[-1] # Last item is newest
-        else:
-            newest_msg = messages[0]  # First item is newest
-            
-        # Save the ID
-        state[str(channel_id)] = newest_msg.id
-            
-        # 5. Persist State to Disk
-        self._save_state(state)
-
-        logger.info(f"Scraping run complete. New events: {total_events}")
-        return total_events
-
-    async def _process_messages(self, messages: List[Any]) -> int:
-        saved_count = 0
-        for msg in messages:
-            content = msg.content
-            if not content:
-                continue
-
-            try:
-                # 3. Parse
-                parsed_event = self.parse_event_func(content)
-                
-                # 4. Add Club ID (Transformation)
-                event_payload = parsed_event.copy()
-
-                # 5. Save
-                self.event_service.create_event(event_payload)
-                saved_count += 1
-                
-            except Exception as e:
-                logger.error(f"Skipping message {msg.id}: {e}")
-        
-        return saved_count
+            logger.error(f"Failed to save state: {e}")
