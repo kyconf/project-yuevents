@@ -9,12 +9,13 @@ interface Prop {
   buttonText: string;
   queryParam: string;
   children: string[];
+  ids?: string[]; // should be a 1-1 with children, with ids[0] being the id of children[0]
   menuType: "check" | "single";
 }
 
 export default function MenuTemplateCheckBox(props: Prop) {
   // May have to limit the size on the dropdown menu, make max width and height
-  const { buttonText, children, queryParam, menuType } = props;
+  const { buttonText, queryParam, children, ids, menuType } = props;
   const [isOpen, setIsOpen] = useState(false);
   const transClass = isOpen ? "flex" : "hidden";
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -52,7 +53,12 @@ export default function MenuTemplateCheckBox(props: Prop) {
       {buttonText}
       <SlArrowDown />
       {menuType == "check" ? (
-        <CheckBox children={children} isOpen={transClass} query={queryParam} />
+        <CheckBox
+          children={children}
+          ids={ids}
+          isOpen={transClass}
+          query={queryParam}
+        />
       ) : (
         <SingleMenu
           children={children}

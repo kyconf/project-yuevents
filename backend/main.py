@@ -5,9 +5,9 @@ from supabase_client import supabase
 from controllers.event_controller import router as event_router
 from controllers.user_controller import router as user_router
 from controllers.club_controller import router as club_router
+from controllers.review_controller import router as review_router
 
 app = FastAPI()
-
 # Allow requests from any origin
 app.add_middleware(
     CORSMiddleware,
@@ -20,6 +20,7 @@ app.add_middleware(
 app.include_router(event_router)
 app.include_router(user_router)
 app.include_router(club_router)
+app.include_router(review_router)
 
 @app.get("/")
 def home():

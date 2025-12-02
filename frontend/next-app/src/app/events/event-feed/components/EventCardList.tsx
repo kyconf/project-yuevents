@@ -30,6 +30,13 @@ export const getEventCardGroups = async (
     const url = `http://127.0.0.1:8000/events?offset=${offset}&limit=${limit}&${queryString}`;
     const response = await fetch(url);
     const data = await response.json();
+
+    // Ensure data is always an array
+    if (!Array.isArray(data)) {
+      console.error("Expected array but got:", typeof data);
+      return [];
+    }
+
     return data;
   } catch (error: unknown) {
     console.log(error);
@@ -61,11 +68,15 @@ export default function EventCardList({
 
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
-  const [items, setItems] = useState<EventInformation[][]>(initialGroups);
+
+  // Ensure initialGroups is always an array
+  const safeInitialGroups = Array.isArray(initialGroups) ? initialGroups : [];
+
+  const [items, setItems] = useState<EventInformation[][]>(safeInitialGroups);
   const [page, setPage] = useState(initialPage);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(
-    totalItems > initialGroups.length * limit
+    totalItems > safeInitialGroups.length * limit
   );
   const [error, setError] = useState("");
 
@@ -76,9 +87,10 @@ export default function EventCardList({
 
   // Reset state when initial props change (when navigating back)
   useEffect(() => {
-    setItems(initialGroups);
+    const safeGroups = Array.isArray(initialGroups) ? initialGroups : [];
+    setItems(safeGroups);
     setPage(initialPage);
-    setHasMore(totalItems > initialGroups.length * limit);
+    setHasMore(totalItems > safeGroups.length * limit);
     setError("");
   }, [initialGroups, initialPage, totalItems, limit]);
 
@@ -96,7 +108,9 @@ export default function EventCardList({
         setHasMore(false);
         setError("No more items to load");
       } else {
-        setItems((prevItems) => [...prevItems, ...result]);
+        // Ensure result is an array before spreading
+        const safeResult = Array.isArray(result) ? result : [];
+        setItems((prevItems) => [...prevItems, ...safeResult]);
         setPage(nextPage);
 
         // Check if all events have been fetched
@@ -142,12 +156,13 @@ export default function EventCardList({
 
       {/* Event Card list */}
       <div className="flex flex-col gap-5 my-5">
-        {items.map((events, index) => (
-          <EventCardGroups
-            key={`${index}-${events[0]?.id || index}`}
-            events={events}
-          />
-        ))}
+        {Array.isArray(items) &&
+          items.map((events, index) => (
+            <EventCardGroups
+              key={`${index}-${events[0]?.id || index}`}
+              events={events}
+            />
+          ))}
       </div>
 
       {/* Loading indicator and observer target */}

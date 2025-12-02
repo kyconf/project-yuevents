@@ -4,45 +4,47 @@ import React, { useEffect, useRef, useState } from "react";
 
 interface Prop {
   children: string[];
+  ids?: string[];
   isOpen: "flex" | "hidden";
   query: string;
 }
 
 /**
  * A template for producing check box menus for filter fields.
- * @prop {string[]} children - The list of button field texts for the menu
+ * @prop {string[]} children - The list of button field texts for the menu (display labels)
+ * @prop {string[]} ids - The list of values corresponding to each label (optional, defaults to children)
  * @prop {"flex" | "hidden"} - A constant representing the visibility status of this menu
  * @prop {string} query - The name of the query parameter that the form values will be submitted under
  *
  * @returns A check box menu
  */
 const CheckboxMenu = (props: Prop) => {
-  const { children, isOpen, query } = props;
+  const { children, ids, isOpen, query } = props;
   const menuItems = children || [];
+  const menuIds = ids || children; // Use ids if provided, otherwise fall back to children
   const searchParams = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
 
   // Initialize check menu items to being as all being unchecked
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     () => {
-      return menuItems.reduce((acc, item) => {
-        acc[item] = false;
+      return menuIds.reduce((acc, id) => {
+        acc[id] = false;
         return acc;
       }, {} as { [key: string]: boolean });
     }
   );
 
-  // Need to update which items have been checked
   /**
-   * @param {string} item - An element of children
+   * @param {string} id - The id value corresponding to the checked item
    *
-   *  item has been checked/unchecked in the menu, update the status of the input field
+   * Item has been checked/unchecked in the menu, update the status of the input field
    */
-  const handleCheck = (item: string) => {
+  const handleCheck = (id: string) => {
     setCheckedItems((prev) => {
       const newState = {
         ...prev,
-        [item]: !prev[item],
+        [id]: !prev[id],
       };
       // Auto-submit after state update
       setTimeout(() => handleSubmit(), 0);
@@ -57,9 +59,9 @@ const CheckboxMenu = (props: Prop) => {
     }
   };
 
-  // Get the combined value for the query parameter
+  // Get the combined value for the query parameter (using ids)
   const getCombinedValue = () => {
-    return menuItems.filter((item) => checkedItems[item]).join("%");
+    return menuIds.filter((id) => checkedItems[id]).join("%");
   };
 
   // Fully clear queries, refresh checkbox states
@@ -68,12 +70,12 @@ const CheckboxMenu = (props: Prop) => {
     const currentValues = currentValue ? currentValue.split("%") : [];
 
     setCheckedItems(() => {
-      return menuItems.reduce((acc, item) => {
-        acc[item] = currentValues.includes(item.replace("+", " "));
+      return menuIds.reduce((acc, id) => {
+        acc[id] = currentValues.includes(id.replace("+", " "));
         return acc;
       }, {} as { [key: string]: boolean });
     });
-  }, [searchParams, query, menuItems]);
+  }, [searchParams, query, menuIds]);
 
   const combinedValue = getCombinedValue();
 
@@ -101,20 +103,23 @@ const CheckboxMenu = (props: Prop) => {
       )}
 
       <div className="flex flex-col">
-        {menuItems.map((child) => (
-          <label
-            key={child}
-            className="hover:bg-blue-400 px-4 py-1 cursor-pointer"
-          >
-            <input
-              className="cursor-pointer"
-              type="checkbox"
-              checked={checkedItems[child]}
-              onChange={() => handleCheck(child)}
-            />{" "}
-            {child}
-          </label>
-        ))}
+        {menuItems.map((child, index) => {
+          const id = menuIds[index];
+          return (
+            <label
+              key={id}
+              className="hover:bg-blue-400 px-4 py-1 cursor-pointer"
+            >
+              <input
+                className="cursor-pointer"
+                type="checkbox"
+                checked={checkedItems[id]}
+                onChange={() => handleCheck(id)}
+              />{" "}
+              {child}
+            </label>
+          );
+        })}
       </div>
     </Form>
   );

@@ -1,98 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Header from "@/app/components/Header";
 import SidePanel from "./components/SidePanel";
 import Calendar from "./components/Calendar";
-import { ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
-
-// Needs some fetch request
-const eventGroups: EventInformation[][] = [
-  [
-    {
-      id: "6a4ea479-7078-4ed1-b018-0c4bedca7edd",
-      title: "Photography Event",
-      description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, expedita! Eligendi voluptates hic iure consectetur, dolorum ipsum. Possimus quibusdam assumenda quisquam, quos vel consequuntur libero officia voluptatum veniam quidem ducimus.",
-      start_at: "2025-11-12T03:46:33.553+00:00",
-      end_at: "2025-11-12T03:47:33.553+00:00",
-      location: "string",
-      club_id: "4a55f963-090e-43e7-b3a4-07a44d0b3585",
-      club_name: "Photography",
-      banner:
-        "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/FurryBanner.png",
-    },
-    {
-      id: "b0a9e34a-97ed-433a-8572-5ed1c6b7bf7e",
-      title: "Furry Club Meetup",
-      description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, expedita! Eligendi voluptates hic iure consectetur, dolorum ipsum. Possimus quibusdam assumenda quisquam, quos vel consequuntur libero officia voluptatum veniam quidem ducimus.",
-      start_at: "2025-11-20T19:00:00+00:00",
-      end_at: "2025-11-20T21:00:00+00:00",
-      location: "SJ Hall, Room 204",
-      club_id: "3c8366fb-c02d-4baa-9de3-ac230ac8be4a",
-      club_name: "Furry @ Yorku",
-      banner:
-        "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/FurryBanner.png",
-    },
-    {
-      id: "1",
-      title: "Furry Club Meetup",
-      description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, expedita! Eligendi voluptates hic iure consectetur, dolorum ipsum. Possimus quibusdam assumenda quisquam, quos vel consequuntur libero officia voluptatum veniam quidem ducimus.",
-      start_at: "2025-11-20T19:00:00+00:00",
-      end_at: "2025-11-20T21:00:00+00:00",
-      location: "SJ Hall, Room 204",
-      club_id: "3c8366fb-c02d-4baa-9de3-ac230ac8be4a",
-      club_name: "Furry @ Yorku",
-      banner:
-        "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/FurryBanner.png",
-    },
-    {
-      id: "2",
-      title: "Furry Club Meetup",
-      description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, expedita! Eligendi voluptates hic iure consectetur, dolorum ipsum. Possimus quibusdam assumenda quisquam, quos vel consequuntur libero officia voluptatum veniam quidem ducimus.",
-      start_at: "2025-11-20T19:00:00+00:00",
-      end_at: "2025-11-20T21:00:00+00:00",
-      location: "SJ Hall, Room 204",
-      club_id: "3c8366fb-c02d-4baa-9de3-ac230ac8be4a",
-      club_name: "Furry @ Yorku",
-      banner:
-        "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/FurryBanner.png",
-    },
-  ],
-  [
-    {
-      id: "6a4ea479-7078-4ed1-b018-0c4bedca7edd",
-      title: "Photography Event",
-      description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, expedita! Eligendi voluptates hic iure consectetur, dolorum ipsum. Possimus quibusdam assumenda quisquam, quos vel consequuntur libero officia voluptatum veniam quidem ducimus.",
-      start_at: "2025-11-15T03:46:33.553+00:00",
-      end_at: "2025-11-15T03:47:33.553+00:00",
-      location: "string",
-      club_id: "4a55f963-090e-43e7-b3a4-07a44d0b3585",
-      club_name: "Photography",
-      banner:
-        "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/FurryBanner.png",
-    },
-  ],
-  [
-    {
-      id: "b0a9e34a-97ed-433a-8572-5ed1c6b7bf7e",
-      title: "Furry Club Meetup",
-      description:
-        "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit, expedita! Eligendi voluptates hic iure consectetur, dolorum ipsum. Possimus quibusdam assumenda quisquam, quos vel consequuntur libero officia voluptatum veniam quidem ducimus.",
-      start_at: "2025-11-30T19:00:00+00:00",
-      end_at: "2025-11-30T21:00:00+00:00",
-      location: "SJ Hall, Room 204",
-      club_id: "3c8366fb-c02d-4baa-9de3-ac230ac8be4a",
-      club_name: "Furry @ Yorku",
-      banner:
-        "https://zpurdydmbdgqdsicfuaw.supabase.co/storage/v1/object/public/test_bucket/FurryBanner.png",
-    },
-  ],
-];
+import { useSearchParams } from "next/navigation";
 
 export interface EventInformation {
   id: string;
@@ -109,50 +21,6 @@ export interface EventInformation {
 
 /**
  *
- * @param {ReadonlyURLSearchParams} searchParams - Current search parameters
- * @param {EventInformation[][]} eventGroups - Array of event groups that belong in the same month
- * @returns Map of month dates to event groups
- */
-const getDays = (
-  searchParams: ReadonlyURLSearchParams,
-  eventGroups: EventInformation[][]
-) => {
-  const days: Map<Date, EventInformation[] | null> = new Map<
-    Date,
-    EventInformation[]
-  >();
-  let date = new Date();
-  const year =
-    searchParams.get("year") === null
-      ? date.getFullYear()
-      : Number(searchParams.get("year"));
-  const month =
-    searchParams.get("month") === null
-      ? date.getMonth()
-      : Number(searchParams.get("month"));
-  date = new Date(year, month, 1);
-  let eventGroupsIndex = 0;
-  let eventGroupsLength = eventGroups.length;
-
-  do {
-    if (
-      eventGroupsIndex < eventGroupsLength &&
-      new Date(eventGroups[eventGroupsIndex][0].start_at).getUTCDate() ===
-        date.getUTCDate()
-    ) {
-      days.set(date, eventGroups[eventGroupsIndex]);
-      eventGroupsIndex++;
-    } else {
-      days.set(date, null);
-    }
-    date = new Date(year, month, date.getDate() + 1);
-  } while (date.getMonth() === month);
-
-  return days;
-};
-
-/**
- *
  * @param {Date} startDate - Starting date for range
  * @param {Date} endDate - Ending date for range
  * @returns xx:xx - xx:xx, time range from startDate to endDate
@@ -165,9 +33,9 @@ export function formatDateRange(startDate: Date, endDate: Date) {
   }
 
   const startHour = startDate.getHours();
-  const startMinute = startDate.getMinutes().toString().padStart(2, "0"); // Ensures two-digit minutes
+  const startMinute = startDate.getMinutes().toString().padStart(2, "0");
   const endHour = endDate.getHours();
-  const endMinute = endDate.getMinutes().toString().padStart(2, "0"); // Ensures two-digit minutes
+  const endMinute = endDate.getMinutes().toString().padStart(2, "0");
 
   return `${startHour}:${startMinute} - ${endHour}:${endMinute}`;
 }
@@ -176,13 +44,77 @@ export function formatDateRange(startDate: Date, endDate: Date) {
  *
  * @returns Calendar page
  */
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedEvents, setSelectedEvents] = useState<
     EventInformation[] | null
   >(null);
-  const days = getDays(searchParams, eventGroups);
+  const [eventGroups, setEventGroups] = useState<EventInformation[][]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Memoize year and month from search params
+  const year = useMemo(() => {
+    const yearParam = searchParams.get("year");
+    return yearParam !== null ? Number(yearParam) : new Date().getFullYear();
+  }, [searchParams]);
+
+  const month = useMemo(() => {
+    const monthParam = searchParams.get("month");
+    return monthParam !== null ? Number(monthParam) : new Date().getMonth();
+  }, [searchParams]);
+
+  // Fetch event groups when year/month changes
+  useEffect(() => {
+    const fetchEventGroups = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch(
+          `http://127.0.0.1:8000/events/calendar?month=${month}&year=${year}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data: EventInformation[][] = await response.json();
+        console.log(data);
+        setEventGroups(data);
+      } catch (error) {
+        console.error("Failed to fetch event groups:", error);
+        setEventGroups([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEventGroups();
+  }, [year, month]);
+
+  // Generate days map
+  const days = useMemo(() => {
+    const daysMap: Map<Date, EventInformation[] | null> = new Map();
+    let date = new Date(year, month, 1);
+    let eventGroupsIndex = 0;
+    const eventGroupsLength = eventGroups.length;
+
+    do {
+      if (
+        eventGroupsIndex < eventGroupsLength &&
+        new Date(eventGroups[eventGroupsIndex][0].start_at).getUTCDate() ===
+          date.getUTCDate()
+      ) {
+        daysMap.set(date, eventGroups[eventGroupsIndex]);
+        eventGroupsIndex++;
+      } else {
+        daysMap.set(date, null);
+      }
+      date = new Date(year, month, date.getDate() + 1);
+    } while (date.getMonth() === month);
+
+    return daysMap;
+  }, [year, month, eventGroups]);
 
   // Handler to update selected date and events
   const handleCellClick = (date: Date, events: EventInformation[] | null) => {
@@ -190,20 +122,34 @@ const page = () => {
     setSelectedEvents(events);
   };
 
+  // Update selected events when days changes or selected date changes
   useEffect(() => {
-    // Find today's date in the days Map by comparing date values
     let todayEvents: EventInformation[] | null = null;
 
     for (const [date, events] of days.entries()) {
-      if (date.getDate() === selectedDate.getDate()) {
+      if (
+        date.getDate() === selectedDate.getDate() &&
+        date.getMonth() === selectedDate.getMonth() &&
+        date.getFullYear() === selectedDate.getFullYear()
+      ) {
         todayEvents = events;
         break;
       }
     }
 
     setSelectedEvents(todayEvents);
-    console.log(todayEvents);
-  }, [searchParams]);
+  }, [days, selectedDate]);
+
+  if (loading) {
+    return (
+      <div className="h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-white">Loading calendar...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col">
@@ -223,4 +169,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
