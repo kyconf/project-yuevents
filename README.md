@@ -56,3 +56,6 @@ The team uses GitHub Issues to manage:
 - Assigned tasks
 
 Each issue is labeled (frontend, backend, scraping, documentation) and assigned to a specific team member
+
+
+Built by Kyle Fernandez, Ethan Constantin, Nathan Benayguev, Trung Duc Pham, Jason Hu
