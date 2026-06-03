@@ -17,7 +17,7 @@ York University students often miss campus events because information is scatter
 
 ### Setup Procedure
 
-1. Clone the repository: `git clone https://github.com/EECS3311F25/project-yuevents.git`
+1. Clone the repository: `git clone https://github.com/EECS3311F25/project-yuevents.git // NOW git clone https://github.com/kyconf/project-yuevents.git due to GitHub Classroom removal`
 2. Navigate to the path frontend/next-app: `cd frontend/next-app`
 3. Install frontend dependencies: `npm install`
 4. Start the development server: `npm start`
