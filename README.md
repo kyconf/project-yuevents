@@ -1,5 +1,7 @@
 # York University Event Aggregator App
 
+AGILE (SPRINT-BASED PROJECT) VIA JIRA
+
 ## Motivation
 
 York University students often miss campus events because information is scattered across multiple platforms such as Discord servers, Instagram pages, and club websites. The Event Aggregator App provides a centralized platform that automatically collects and organizes event data from these sources using web scraping and APIs (with permission). It gives students one location to find all upcoming social, and club events, helping them stay informed and engaged in campus life. The project exists to simplify event discovery, improve participation, and support both students and club organizers through automation and accessibility.
